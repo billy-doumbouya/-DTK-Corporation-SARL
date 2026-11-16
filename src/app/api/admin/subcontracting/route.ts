@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
 import { stringifyArray } from '@/lib/settings'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -40,11 +41,13 @@ export async function PATCH(request: NextRequest) {
     if (!current) {
       const created = await db.subcontractingPage.create({ data: { id: 'singleton', ...data } })
       revalidateForModel('SubcontractingPage')
+      await logAction(user.id, ACTIONS.SUBCONTRACTING_UPDATE, 'singleton')
       return NextResponse.json({ page: created })
     }
 
     const updated = await db.subcontractingPage.update({ where: { id: 'singleton' }, data })
     revalidateForModel('SubcontractingPage')
+    await logAction(user.id, ACTIONS.SUBCONTRACTING_UPDATE, 'singleton')
     return NextResponse.json({ page: updated })
   } catch (e: any) {
      

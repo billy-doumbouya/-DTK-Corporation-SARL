@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
 import { apiHandler } from '@/lib/api-wrap'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 interface Params { params: Promise<{ id: string }> }
@@ -20,6 +21,7 @@ export const PATCH = apiHandler(async (request: NextRequest, { params }: Params)
   if (body.isPublished !== undefined) data.isPublished = !!body.isPublished
   const item = await db.faqItem.update({ where: { id }, data })
   revalidateForModel('FaqItem')
+  await logAction(user.id, ACTIONS.FAQ_UPDATE, `id=${id}`)
   return NextResponse.json({ item })
 }, 'admin/faq/[id] PATCH')
 
@@ -29,5 +31,6 @@ export const DELETE = apiHandler(async (_request: NextRequest, { params }: Param
   const { id } = await params
   await db.faqItem.delete({ where: { id } })
   revalidateForModel('FaqItem')
+  await logAction(user.id, ACTIONS.FAQ_DELETE, `id=${id}`)
   return NextResponse.json({ ok: true })
 }, 'admin/faq/[id] DELETE')

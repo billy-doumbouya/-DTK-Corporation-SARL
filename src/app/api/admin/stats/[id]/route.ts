@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
 import { apiHandler } from '@/lib/api-wrap'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 interface Params { params: Promise<{ id: string }> }
@@ -20,6 +21,7 @@ export const PATCH = apiHandler(async (request: NextRequest, { params }: Params)
   if (body.isPublished !== undefined) data.isPublished = !!body.isPublished
   const item = await db.siteStat.update({ where: { id }, data })
   revalidateForModel('SiteStat')
+  await logAction(user.id, ACTIONS.STAT_UPDATE, `id=${id}`)
   return NextResponse.json({ item })
 }, 'admin/stats/[id] PATCH')
 
@@ -29,5 +31,6 @@ export const DELETE = apiHandler(async (_request: NextRequest, { params }: Param
   const { id } = await params
   await db.siteStat.delete({ where: { id } })
   revalidateForModel('SiteStat')
+  await logAction(user.id, ACTIONS.STAT_DELETE, `id=${id}`)
   return NextResponse.json({ ok: true })
 }, 'admin/stats/[id] DELETE')

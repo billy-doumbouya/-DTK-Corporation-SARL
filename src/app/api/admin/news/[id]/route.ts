@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 interface Params { params: Promise<{ id: string }> }
@@ -21,6 +22,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     const item = await db.newsArticle.update({ where: { id }, data })
     revalidateForModel('NewsArticle')
+    await logAction(user.id, ACTIONS.NEWS_UPDATE, `id=${id}`)
     return NextResponse.json({ item })
   } catch (e: any) {
     if (e?.code === 'P2002') return NextResponse.json({ error: 'Ce slug existe déjà.' }, { status: 400 })
@@ -34,5 +36,6 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
   const { id } = await params
   await db.newsArticle.delete({ where: { id } })
   revalidateForModel('NewsArticle')
+  await logAction(user.id, ACTIONS.NEWS_DELETE, `id=${id}`)
   return NextResponse.json({ ok: true })
 }

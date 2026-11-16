@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -47,6 +48,7 @@ export async function PATCH(request: NextRequest) {
       data: { ...current, ...allowed },
     })
     revalidateForModel('SiteSettings')
+    await logAction(user.id, ACTIONS.SETTINGS_UPDATE, 'singleton')
     return NextResponse.json({ settings: updated })
   } catch (e: any) {
      

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -16,6 +17,7 @@ export async function GET(request: NextRequest) {
 
     if (action === 'reindex') {
       await reindexKnowledge()
+      await logAction(user.id, ACTIONS.CHATBOT_REINDEX, 'knowledge')
       return NextResponse.json({ ok: true, message: 'Base de connaissances réindexée.' })
     }
 
@@ -45,6 +47,7 @@ export async function POST(request: NextRequest) {
     }
     const item = await db.chatbotModelConfig.create({ data })
     revalidateForModel('ChatbotModelConfig')
+    await logAction(user.id, ACTIONS.CHATBOT_CONFIG_CREATE, `model=${item.model}`)
     return NextResponse.json({ item })
   } catch (e: any) {
      
@@ -68,6 +71,7 @@ export async function PATCH(request: NextRequest) {
     if (body.enabled !== undefined) data.enabled = !!body.enabled
     const item = await db.chatbotModelConfig.update({ where: { id: body.id }, data })
     revalidateForModel('ChatbotModelConfig')
+    await logAction(user.id, ACTIONS.CHATBOT_CONFIG_UPDATE, `id=${body.id}`)
     return NextResponse.json({ item })
   } catch (e: any) {
      
@@ -86,6 +90,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) return NextResponse.json({ error: 'ID requis.' }, { status: 400 })
     await db.chatbotModelConfig.delete({ where: { id } })
     revalidateForModel('ChatbotModelConfig')
+    await logAction(user.id, ACTIONS.CHATBOT_CONFIG_DELETE, `id=${id}`)
     return NextResponse.json({ ok: true })
   } catch (e: any) {
      

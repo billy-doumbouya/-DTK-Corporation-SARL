@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
 import { stringifyArray } from '@/lib/settings'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -38,6 +39,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     const item = await db.service.update({ where: { id }, data })
     revalidateForModel('Service')
+    await logAction(user.id, ACTIONS.SERVICE_UPDATE, `slug=${item.slug}`)
     return NextResponse.json({ item })
   } catch (e: any) {
     if (e?.code === 'P2002') {
@@ -53,5 +55,6 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
   const { id } = await params
   await db.service.delete({ where: { id } })
   revalidateForModel('Service')
+  await logAction(user.id, ACTIONS.SERVICE_DELETE, `id=${id}`)
   return NextResponse.json({ ok: true })
 }

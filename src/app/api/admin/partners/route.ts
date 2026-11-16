@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
     if (!data.name) return NextResponse.json({ error: 'Nom requis.' }, { status: 400 })
     const item = await db.partner.create({ data })
     revalidateForModel('Partner')
+    await logAction(user.id, ACTIONS.PARTNER_CREATE, `id=${item.id}`)
     return NextResponse.json({ item })
   } catch (e: any) {
      

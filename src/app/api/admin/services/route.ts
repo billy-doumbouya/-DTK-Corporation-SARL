@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
 import { stringifyArray } from '@/lib/settings'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -45,6 +46,7 @@ export async function POST(request: NextRequest) {
   try {
     const item = await db.service.create({ data })
     revalidateForModel('Service')
+    await logAction(user.id, ACTIONS.SERVICE_CREATE, `slug=${item.slug}`)
     return NextResponse.json({ item })
   } catch (e: any) {
     if (e?.code === 'P2002') {

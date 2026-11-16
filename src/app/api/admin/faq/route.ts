@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
     if (!data.question || !data.answer) return NextResponse.json({ error: 'Question et réponse requises.' }, { status: 400 })
     const item = await db.faqItem.create({ data })
     revalidateForModel('FaqItem')
+    await logAction(user.id, ACTIONS.FAQ_CREATE, `id=${item.id}`)
     return NextResponse.json({ item })
   } catch (e: any) {
      

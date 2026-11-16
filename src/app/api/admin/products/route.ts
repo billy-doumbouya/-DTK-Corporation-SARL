@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -34,6 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     const item = await db.product.create({ data })
     revalidateForModel('Product')
+    await logAction(user.id, ACTIONS.PRODUCT_CREATE, `slug=${item.slug}`)
     return NextResponse.json({ item })
   } catch (e: any) {
     if (e?.code === 'P2002') return NextResponse.json({ error: 'Ce slug existe déjà.' }, { status: 400 })

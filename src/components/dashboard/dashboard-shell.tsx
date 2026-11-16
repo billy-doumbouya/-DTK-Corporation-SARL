@@ -32,6 +32,7 @@ const NAV: NavItem[] = [
   { href: '/dashboard/chatbot', label: 'Configuration', icon: 'FaRobot', group: 'Chatbot' },
   { href: '/dashboard/media', label: 'Médias', icon: 'FaImages', group: 'Outils' },
   { href: '/dashboard/settings', label: 'Paramètres', icon: 'FaCog', group: 'Outils' },
+  { href: '/dashboard/audit', label: 'Journal d’audit', icon: 'FaFileAlt', group: 'Outils' },
   { href: '/dashboard/account', label: 'Mon compte', icon: 'FaUser', group: 'Outils' },
 ]
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
     if (!data.label) return NextResponse.json({ error: 'Libellé requis.' }, { status: 400 })
     const item = await db.siteStat.create({ data })
     revalidateForModel('SiteStat')
+    await logAction(user.id, ACTIONS.STAT_CREATE, `id=${item.id}`)
     return NextResponse.json({ item })
   } catch (e: any) {
      

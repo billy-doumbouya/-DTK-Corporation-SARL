@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -33,6 +34,7 @@ export async function DELETE(request: NextRequest) {
       if (storage.delete) await storage.delete(media.url).catch(() => {})
     }
     await db.media.delete({ where: { id } })
+    await logAction(user.id, ACTIONS.MEDIA_DELETE, `id=${id}`)
     return NextResponse.json({ ok: true })
   } catch (e: any) {
      

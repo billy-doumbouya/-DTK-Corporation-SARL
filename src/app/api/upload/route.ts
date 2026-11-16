@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { getStorage, ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from '@/lib/storage'
 import { db } from '@/lib/db'
+import { logAction, ACTIONS } from '@/lib/audit'
 
 export const runtime = 'nodejs'
 
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    await logAction(user.id, ACTIONS.MEDIA_UPLOAD, `file=${result.filename}`)
     return NextResponse.json({ media })
   } catch (e: any) {
      
