@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { revalidateForModel } from '@/lib/revalidate'
+import { apiHandler } from '@/lib/api-wrap'
 
 export const runtime = 'nodejs'
 interface Params { params: Promise<{ id: string }> }
 
-export async function PATCH(request: NextRequest, { params }: Params) {
+export const PATCH = apiHandler(async (request: NextRequest, { params }: Params) => {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   const { id } = await params
@@ -20,13 +21,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const item = await db.engagement.update({ where: { id }, data })
   revalidateForModel('Engagement')
   return NextResponse.json({ item })
-}
+}, 'admin/engagements/[id] PATCH')
 
-export async function DELETE(_request: NextRequest, { params }: Params) {
+export const DELETE = apiHandler(async (_request: NextRequest, { params }: Params) => {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   const { id } = await params
   await db.engagement.delete({ where: { id } })
   revalidateForModel('Engagement')
   return NextResponse.json({ ok: true })
-}
+}, 'admin/engagements/[id] DELETE')

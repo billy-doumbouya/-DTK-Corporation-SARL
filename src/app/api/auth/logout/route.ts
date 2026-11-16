@@ -5,14 +5,20 @@ import { db } from '@/lib/db'
 export const runtime = 'nodejs'
 
 export async function POST() {
-  const token = await getSessionToken()
-  const session = getSession(token)
-  if (session) {
-    destroySession(session.token)
-    await db.auditLog.create({
-      data: { userId: session.userId, action: 'logout' },
-    }).catch(() => {})
+  try {
+    const token = await getSessionToken()
+    const session = getSession(token)
+    if (session) {
+      destroySession(session.token)
+      await db.auditLog.create({
+        data: { userId: session.userId, action: 'logout' },
+      }).catch(() => {})
+    }
+    await clearSessionCookie()
+    return NextResponse.json({ ok: true })
+  } catch (e: any) {
+     
+    console.error('[auth/logout] error:', e)
+    return NextResponse.json({ error: 'Erreur serveur.' }, { status: 500 })
   }
-  await clearSessionCookie()
-  return NextResponse.json({ ok: true })
 }
