@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// DTK Corporation SARL — Prisma schema
+// SQLite provider for development; switch to "postgresql" for production (Neon).
+// All slugs are unique. Soft-delete via `deletedAt` where relevant.
 
 generator client {
   provider = "prisma-client-js"
@@ -13,20 +11,417 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Auth & RBAC ──────────────────────────────────────────────────────────────
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String?
+  passwordHash    String
+  failedAttempts  Int      @default(0)
+  lockedUntil     DateTime?
+  lastLoginAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userRoles       UserRole[]
+  auditLogs       AuditLog[]
+
+  @@index([email])
 }
 
-model Post {
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique // "admin", "editor", ...
+  description String?
+
+  rolePermissions RolePermission[]
+  users           UserRole[]
+
+  createdAt   DateTime @default(now())
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  action      String   @unique // e.g. "requests.read", "services.write"
+  description String?
+
+  rolePermissions RolePermission[]
+}
+
+model UserRole {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  userId    String
+  roleId    String
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+model RolePermission {
+  id           String   @id @default(cuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String   // "login", "logout", "request.update_status", ...
+  detail    String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── Content: Services, Products, Formations ─────────────────────────────────
+
+model Service {
+  id              String   @id @default(cuid())
+  slug            String   @unique // "btp", "agro-alimentaire", "formation", "elevage", "froid", "sous-traitance"
+  title           String
+  shortTitle      String?
+  excerpt         String   // court résumé pour cartes
+  description     String   // long (markdown)
+  iconKey         String   @default("FaBuilding") // react-icons key
+  coverUrl        String?
+  coverAlt        String?
+  order           Int      @default(0)
+  isSubcontracting Boolean @default(false)
+  isPublished     Boolean  @default(true)
+  zones           String   @default("") // "Conakry, Kankan, Siguiri, Dinguiraye"
+  features        String   @default("") // JSON array string of bullet points
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  images     ServiceImage[]
+  products   Product[]
+  formations Formation[]
+
+  @@index([order])
+}
+
+model ServiceImage {
+  id        String   @id @default(cuid())
+  serviceId String
+  url       String
+  alt       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  serviceId   String   // linked to agro or elevage service
+  name        String
+  slug        String   @unique
+  excerpt     String
+  description String
+  imageUrl    String?
+  imageAlt    String?
+  unit        String?  // "sac 25kg", "litre", ...
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+}
+
+model Formation {
+  id          String   @id @default(cuid())
+  serviceId   String   // linked to formation service
+  title       String
+  slug        String   @unique
+  excerpt     String
+  description String
+  duration    String   // "2 à 3 mois"
+  audience    String   // "jeunes diplômés et professionnels"
+  imageUrl    String?
+  imageAlt    String?
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+}
+
+// ─── Portfolio & News ────────────────────────────────────────────────────────
+
+model Realisation {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String
+  description String   // markdown
+  category    String   @default("BTP") // BTP, Agro, Froid, ...
+  location    String?
+  coverUrl    String?
+  coverAlt    String?
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  images RealisationImage[]
+
+  @@index([publishedAt])
+  @@index([category])
+}
+
+model RealisationImage {
+  id            String   @id @default(cuid())
+  realisationId String
+  url           String
+  alt           String
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  realisation Realisation @relation(fields: [realisationId], references: [id], onDelete: Cascade)
+
+  @@index([realisationId])
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String
+  content     String   // markdown
+  coverUrl    String?
+  coverAlt    String?
+  tags        String   @default("")
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  authorName  String   @default("DTK Corporation SARL")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([publishedAt])
+}
+
+// ─── Home: Slides, Partners, Stats ───────────────────────────────────────────
+
+model Slide {
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String
+  buttonText  String   @default("En savoir plus")
+  buttonHref  String   @default("/services")
+  imageUrl    String
+  imageAlt    String
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+model Partner {
+  id          String   @id @default(cuid())
+  name        String
+  logoUrl     String?
+  websiteUrl  String?
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+model SiteStat {
+  id          String   @id @default(cuid())
+  label       String   // "Projets réalisés", "Années d'expérience"...
+  value       String   // "100+", "10"
+  iconKey     String   @default("FaChartLine")
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Engagement {
+  id          String   @id @default(cuid())
+  title       String   // "Zéro accident", "Zéro dommage environnement", "Zéro compromis qualité"
+  description String
+  iconKey     String   @default("FaShieldAlt")
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+// ─── Subcontracting page content ─────────────────────────────────────────────
+
+model SubcontractingPage {
+  id            String   @id @default(cuid())
+  headline      String   @default("Sous-traitance")
+  intro         String
+  domains       String   @default("") // JSON array of domains
+  imageUrl      String?
+  imageAlt      String?
+  updatedAt     DateTime @updatedAt
+}
+
+// ─── Chatbot: FAQ, Knowledge, Model config ────────────────────────────────────
+
+model FaqItem {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  keywords    String   @default("") // comma-separated, helps keyword RAG
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+model ChatbotKnowledge {
+  id        String   @id @default(cuid())
+  source    String   // "service:btp", "faq:5", "settings"
+  title     String
+  content   String   // chunk court
+  keywords  String   @default("")
   updatedAt DateTime @updatedAt
+
+  @@index([source])
+}
+
+model ChatbotModelConfig {
+  id        String   @id @default(cuid())
+  provider  String   // "zai" for z-ai-web-dev-sdk
+  model     String   // model name / alias
+  order     Int      @default(0)
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// ─── Requests (dynamic form) ─────────────────────────────────────────────────
+
+model Request {
+  id         String   @id @default(cuid())
+  type       String   // "devis", "contact", "formation", "sous-traitance", "renseignements"
+  // common fields
+  fullName   String
+  phone      String
+  email      String
+  message    String
+  // specific fields stored as JSON string
+  extraData  String   @default("{}")
+  status     String   @default("nouveau") // nouveau, en_cours, traite, archive
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  notes      RequestNote[]
+  attachments RequestAttachment[]
+
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model RequestNote {
+  id        String   @id @default(cuid())
+  requestId String
+  content   String
+  authorId  String?
+  createdAt DateTime @default(now())
+
+  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+model RequestAttachment {
+  id        String   @id @default(cuid())
+  requestId String
+  filename  String
+  url       String
+  mimeType  String
+  size      Int
+  createdAt DateTime @default(now())
+
+  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+// ─── Site settings (singleton) ───────────────────────────────────────────────
+
+model SiteSettings {
+  id                String   @id @default("singleton")
+  siteName          String   @default("DTK Corporation SARL")
+  slogan            String   @default("Professionnalisme, Qualité, Satisfaction")
+  // Coordonnées
+  email             String   @default("")
+  phone             String   @default("")
+  whatsapp          String   @default("") // format: "224xxxxxxxxx"
+  addressLine       String   @default("")
+  addressCity       String   @default("")
+  // Réseaux sociaux
+  facebookUrl       String   @default("")
+  linkedinUrl       String   @default("")
+  instagramUrl      String   @default("")
+  // Zones d'intervention
+  zones             String   @default("Conakry, Kankan, Siguiri, Dinguiraye")
+  // Legal
+  legalName         String   @default("DTK Corporation SARL")
+  legalForm         String   @default("SARL")
+  legalId           String   @default("") // numéro d'immatriculation
+  legalCapital      String   @default("")
+  legalAddress      String   @default("")
+  // SEO par défaut
+  defaultSeoTitle       String @default("DTK Corporation SARL — BTP, Agro, Formation, Froid")
+  defaultSeoDescription String @default("Entreprise guinéenne pluridisciplinaire : BTP, agro-alimentaire, formation, élevage et froid. Professionnalisme, Qualité, Satisfaction.")
+  defaultOgImage        String @default("")
+  // Chatbot
+  chatbotEnabled    Boolean  @default(true)
+  chatbotWelcome    String   @default("Bonjour, je suis l'assistant virtuel de DTK Corporation. Comment puis-je vous aider ?")
+  // Cursor
+  customCursorEnabled Boolean @default(false)
+  updatedAt          DateTime @updatedAt
+}
+
+// ─── Media library ───────────────────────────────────────────────────────────
+
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String
+  filename  String
+  mimeType  String
+  size      Int
+  source    String   @default("upload") // "upload" or "unsplash"
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }

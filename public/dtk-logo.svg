@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+	 viewBox="0 0 220 60" xml:space="preserve">
+  <!-- DTK Corporation SARL logo — navy ellipse + cyan mark -->
+  <defs>
+    <linearGradient id="dtkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#08A9E8"/>
+      <stop offset="100%" stop-color="#101B91"/>
+    </linearGradient>
+  </defs>
+  <!-- Mark: ellipse ring -->
+  <g transform="translate(4,4)">
+    <ellipse cx="26" cy="26" rx="24" ry="20" fill="none" stroke="#101B91" stroke-width="2.5"/>
+    <ellipse cx="26" cy="26" rx="18" ry="14" fill="none" stroke="#08A9E8" stroke-width="1.5" opacity="0.7"/>
+    <text x="26" y="32" font-family="Sora, Arial, sans-serif" font-size="14" font-weight="800"
+          fill="#101B91" text-anchor="middle" letter-spacing="0.5">DTK</text>
+  </g>
+  <!-- Wordmark -->
+  <g transform="translate(64,0)">
+    <text x="0" y="26" font-family="Sora, Arial, sans-serif" font-size="18" font-weight="800"
+          fill="#101B91" letter-spacing="0.5">DTK CORPORATION</text>
+    <text x="0" y="44" font-family="Inter, Arial, sans-serif" font-size="9" font-weight="500"
+          fill="#08A9E8" letter-spacing="2">PROFESSIONNALISME · QUALITÉ · SATISFACTION</text>
+  </g>
+</svg>
