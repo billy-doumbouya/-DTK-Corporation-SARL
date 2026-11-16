@@ -3,6 +3,7 @@ import { Icon } from '@/lib/icon'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SectionHeading } from '@/components/site/section-heading'
+import { EmptyState } from '@/components/site/empty-state'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -41,14 +42,13 @@ export default async function ProductsPage() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
           {products.length === 0 ? (
-            <div className="mx-auto max-w-xl rounded-2xl border border-dashed border-border bg-muted/20 p-12 text-center">
-              <Icon name="FaTag" size={40} className="mx-auto text-muted-foreground/40" />
-              <h2 className="mt-4 text-lg font-bold">Produits à venir</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Le catalogue produits sera publié prochainement. En attendant, contactez-nous
-                pour toute demande.
-              </p>
-            </div>
+            <EmptyState
+              icon="FaTag"
+              title="Produits à venir"
+              description="Notre catalogue produits sera publié prochainement. En attendant, contactez-nous pour toute demande spécifique — nous vous répondons rapidement."
+              actionLabel="Nous contacter"
+              actionHref="/contact"
+            />
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((p) => (

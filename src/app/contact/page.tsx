@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { getSiteSettings, whatsappLink, splitList } from '@/lib/settings'
 import { RequestForm } from '@/components/site/request-form'
 import { SectionHeading } from '@/components/site/section-heading'
+import { Reveal } from '@/components/site/reveal'
+import { RichBackground, HeroDecor, DotGrid, PathLines, FloatingShapes } from '@/components/site/decor-background'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import { Suspense } from 'react'
@@ -34,151 +36,234 @@ export default async function ContactPage() {
   const wa = whatsappLink(settings?.whatsapp)
   const zones = splitList(settings?.zones)
 
-  const serviceOptions = services.map((s) => ({
-    value: s.slug,
-    label: s.shortTitle || s.title,
-  }))
+  const serviceOptions = services.map((s) => ({ value: s.slug, label: s.shortTitle || s.title }))
   const formationOptions = formations.map((f) => ({ value: f.slug, label: f.title }))
 
+  // Map center: Conakry, Guinea by default, or use settings address
+  const mapQuery = encodeURIComponent(
+    settings?.addressCity
+      ? `${settings.addressLine}, ${settings.addressCity}, Guinea`
+      : 'Conakry, Guinea'
+  )
+
   return (
-    <div className="bg-grid-dtk">
-      {/* Header */}
-      <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground">
-        <div className="bg-ellipse-dtk" aria-hidden="true" />
-        <div className="container relative mx-auto px-4 md:px-6">
-          <div className="max-w-3xl">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-accent">
+    <div className="bg-mesh-dtk">
+      {/* ─── Hero with background image ─── */}
+      <section className="relative flex h-[50vh] min-h-[380px] items-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1423666639041-f56000c53a55?auto=format&fit=crop&w=1920&q=70"
+            alt=""
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 via-[#101B91]/80 to-[#08A9E8]/70" />
+          <HeroDecor />
+        </div>
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
+          <Reveal direction="up" className="max-w-3xl text-primary-foreground">
+            <p className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
+              <span className="h-px w-8 bg-accent/60" />
               Contact
             </p>
-            <h1 className="text-3xl font-extrabold md:text-5xl">Parlons de votre projet</h1>
-            <p className="mt-3 text-lg text-primary-foreground/85">
+            <h1 className="text-4xl font-extrabold md:text-6xl">Parlons de votre projet</h1>
+            <p className="mt-4 text-lg text-primary-foreground/90 md:text-xl">
               Un seul formulaire pour tous vos besoins : devis, inscription, sous-traitance,
               renseignements. Notre équipe vous répond rapidement.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-12 md:px-6 md:py-16">
-        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-          {/* Form */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
-            <Suspense fallback={<div className="h-40 animate-pulse rounded-lg bg-muted" />}>
-              <RequestForm
-                services={serviceOptions}
-                formations={formationOptions}
-                whatsappLink={wa}
-              />
-            </Suspense>
-          </div>
-
-          {/* Sidebar: coordinates */}
-          <aside className="space-y-6">
-            <div className="rounded-xl border border-border bg-card p-6">
-              <h2 className="mb-4 text-lg font-bold">Nos coordonnées</h2>
-              <ul className="space-y-3 text-sm">
-                {settings?.email && (
-                  <ContactRow icon="FaEnvelope" label="Email">
-                    <a href={`mailto:${settings.email}`} className="text-accent hover:underline break-all">
-                      {settings.email}
-                    </a>
-                  </ContactRow>
-                )}
-                {settings?.phone && (
-                  <ContactRow icon="FaPhone" label="Téléphone">
-                    <a href={`tel:${settings.phone}`} className="text-accent hover:underline">
-                      {settings.phone}
-                    </a>
-                  </ContactRow>
-                )}
-                {(settings?.addressLine || settings?.addressCity) && (
-                  <ContactRow icon="FaMapMarkerAlt" label="Adresse">
-                    <span>
-                      {settings?.addressLine}
-                      {settings?.addressLine && settings?.addressCity ? ', ' : ''}
-                      {settings?.addressCity}
-                    </span>
-                  </ContactRow>
-                )}
-                {zones.length > 0 && (
-                  <ContactRow icon="FaGlobe" label="Zones d’intervention">
-                    <span>{zones.join(', ')}</span>
-                  </ContactRow>
-                )}
-              </ul>
+      {/* ─── Quick contact cards ─── */}
+      <section className="relative z-20 -mt-16 px-4 md:px-6">
+        <div className="container mx-auto">
+          <Reveal direction="up" delay={0.1}>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {settings?.email && (
+                <ContactCard icon="FaEnvelope" label="Email" value={settings.email} href={`mailto:${settings.email}`} />
+              )}
+              {settings?.phone && (
+                <ContactCard icon="FaPhone" label="Téléphone" value={settings.phone} href={`tel:${settings.phone}`} />
+              )}
               {wa && (
-                <Button asChild className="mt-4 w-full bg-[#25D366] hover:bg-[#1da851] text-white">
-                  <a href={wa} target="_blank" rel="noopener noreferrer">
-                    <Icon name="FaWhatsapp" size={18} className="mr-2" />
-                    Écrire sur WhatsApp
-                  </a>
-                </Button>
+                <ContactCard icon="FaWhatsapp" label="WhatsApp" value="Discuter maintenant" href={wa} external accentColor="#25D366" />
               )}
-              {!settings?.email && !settings?.phone && !wa && !settings?.addressLine && (
-                <p className="text-xs text-muted-foreground">
-                  Les coordonnées seront affichées ici dès qu’elles seront renseignées par
-                  l’entreprise.
-                </p>
+              {(settings?.addressCity || settings?.addressLine) && (
+                <ContactCard icon="FaMapMarkerAlt" label="Adresse" value={`${settings?.addressLine || ''} ${settings?.addressCity || ''}`.trim()} />
               )}
             </div>
-
-            {/* Social */}
-            {(settings?.facebookUrl || settings?.linkedinUrl || settings?.instagramUrl) && (
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-4 text-lg font-bold">Réseaux sociaux</h2>
-                <div className="flex gap-3">
-                  {settings?.facebookUrl && (
-                    <SocialLink href={settings.facebookUrl} icon="FaFacebookF" label="Facebook" />
-                  )}
-                  {settings?.linkedinUrl && (
-                    <SocialLink href={settings.linkedinUrl} icon="FaLinkedinIn" label="LinkedIn" />
-                  )}
-                  {settings?.instagramUrl && (
-                    <SocialLink href={settings.instagramUrl} icon="FaInstagram" label="Instagram" />
-                  )}
-                </div>
-              </div>
-            )}
-
-            <div className="rounded-xl border border-accent/20 bg-accent/5 p-6">
-              <div className="mb-2 flex items-center gap-2 text-accent">
-                <Icon name="FaInfoCircle" size={18} />
-                <span className="font-semibold">Astuce</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Pour une réponse plus rapide, utilisez le bouton WhatsApp si disponible.
-                Pour les demandes de devis, précisez le lieu et le délai souhaité.
-              </p>
-            </div>
-          </aside>
+          </Reveal>
         </div>
-      </div>
+      </section>
+
+      {/* ─── Form + Map ─── */}
+      <section className="relative overflow-hidden section-padding">
+        <RichBackground />
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
+            {/* Form */}
+            <Reveal direction="right" className="rounded-3xl border border-border bg-card p-6 shadow-xl md:p-10">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold">Envoyez votre demande</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Choisissez le type de demande, remplissez le formulaire et nous vous répondons rapidement.
+                </p>
+              </div>
+              <Suspense fallback={<div className="h-40 animate-pulse rounded-lg bg-muted" />}>
+                <RequestForm
+                  services={serviceOptions}
+                  formations={formationOptions}
+                  whatsappLink={wa}
+                />
+              </Suspense>
+            </Reveal>
+
+            {/* Map + info sidebar */}
+            <div className="space-y-6">
+              {/* Map */}
+              <Reveal direction="left" className="overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
+                <div className="relative h-72 w-full">
+                  <iframe
+                    src={`https://www.openstreetmap.org/export/embed.html?bbox=-13.7%2C9.45%2C-13.55%2C9.6&layer=mapnik&marker=9.5%2C-13.6`}
+                    className="h-full w-full border-0"
+                    loading="lazy"
+                    title="Carte — DTK Corporation SARL"
+                  />
+                  <div className="pointer-events-none absolute top-3 left-3 rounded-lg bg-card/90 px-3 py-2 text-sm shadow-lg backdrop-blur">
+                    <p className="font-semibold">{settings?.legalName || 'DTK Corporation SARL'}</p>
+                    {settings?.addressCity && <p className="text-xs text-muted-foreground">{settings.addressCity}, Guinée</p>}
+                  </div>
+                </div>
+              </Reveal>
+
+              {/* Coordinates */}
+              <Reveal direction="left" delay={0.1} className="rounded-3xl border border-border bg-card p-6 shadow-lg">
+                <h3 className="mb-4 flex items-center gap-2 font-bold">
+                  <Icon name="FaMapMarkerAlt" size={16} className="text-accent" />
+                  Coordonnées
+                </h3>
+                <ul className="space-y-3 text-sm">
+                  {settings?.email && (
+                    <li className="flex items-start gap-3">
+                      <Icon name="FaEnvelope" size={16} className="mt-0.5 shrink-0 text-accent" />
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Email</p>
+                        <a href={`mailto:${settings.email}`} className="text-accent hover:underline break-all">{settings.email}</a>
+                      </div>
+                    </li>
+                  )}
+                  {settings?.phone && (
+                    <li className="flex items-start gap-3">
+                      <Icon name="FaPhone" size={16} className="mt-0.5 shrink-0 text-accent" />
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Téléphone</p>
+                        <a href={`tel:${settings.phone}`} className="text-accent hover:underline">{settings.phone}</a>
+                      </div>
+                    </li>
+                  )}
+                  {(settings?.addressLine || settings?.addressCity) && (
+                    <li className="flex items-start gap-3">
+                      <Icon name="FaMapMarkerAlt" size={16} className="mt-0.5 shrink-0 text-accent" />
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Adresse</p>
+                        <p>{settings?.addressLine}{settings?.addressLine && settings?.addressCity ? ', ' : ''}{settings?.addressCity}</p>
+                      </div>
+                    </li>
+                  )}
+                  {zones.length > 0 && (
+                    <li className="flex items-start gap-3">
+                      <Icon name="FaGlobe" size={16} className="mt-0.5 shrink-0 text-accent" />
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Zones d'intervention</p>
+                        <p>{zones.join(', ')}</p>
+                      </div>
+                    </li>
+                  )}
+                </ul>
+                {!settings?.email && !settings?.phone && !settings?.addressLine && (
+                  <p className="text-xs text-muted-foreground italic">
+                    Les coordonnées seront affichées ici dès qu'elles seront renseignées par l'entreprise.
+                  </p>
+                )}
+                {wa && (
+                  <Button asChild className="mt-4 w-full bg-[#25D366] hover:bg-[#1da851] text-white">
+                    <a href={wa} target="_blank" rel="noopener noreferrer">
+                      <Icon name="FaWhatsapp" size={18} className="mr-2" />
+                      Écrire sur WhatsApp
+                    </a>
+                  </Button>
+                )}
+              </Reveal>
+
+              {/* Social */}
+              {(settings?.facebookUrl || settings?.linkedinUrl || settings?.instagramUrl) && (
+                <Reveal direction="left" delay={0.2} className="rounded-3xl border border-border bg-card p-6 shadow-lg">
+                  <h3 className="mb-4 flex items-center gap-2 font-bold">
+                    <Icon name="FaShareAlt" size={16} className="text-accent" />
+                    Réseaux sociaux
+                  </h3>
+                  <div className="flex gap-3">
+                    {settings?.facebookUrl && (
+                      <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-11 w-11 items-center justify-center rounded-xl border border-border text-muted-foreground transition-all hover:border-[#1877F2] hover:bg-[#1877F2] hover:text-white">
+                        <Icon name="FaFacebookF" size={18} />
+                      </a>
+                    )}
+                    {settings?.linkedinUrl && (
+                      <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="flex h-11 w-11 items-center justify-center rounded-xl border border-border text-muted-foreground transition-all hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white">
+                        <Icon name="FaLinkedinIn" size={18} />
+                      </a>
+                    )}
+                    {settings?.instagramUrl && (
+                      <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-11 w-11 items-center justify-center rounded-xl border border-border text-muted-foreground transition-all hover:border-[#E4405F] hover:bg-gradient-to-br hover:from-[#E4405F] hover:to-[#F77737] hover:text-white">
+                        <Icon name="FaInstagram" size={18} />
+                      </a>
+                    )}
+                  </div>
+                </Reveal>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
 
-function ContactRow({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-3">
-      <Icon name={icon} size={16} className="mt-0.5 shrink-0 text-accent" />
-      <div>
+function ContactCard({
+  icon,
+  label,
+  value,
+  href,
+  external,
+  accentColor,
+}: {
+  icon: string
+  label: string
+  value: string
+  href?: string
+  external?: boolean
+  accentColor?: string
+}) {
+  const inner = (
+    <div className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
+      <span
+        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white transition-transform group-hover:scale-110"
+        style={{ backgroundColor: accentColor || 'var(--primary)' }}
+      >
+        <Icon name={icon} size={20} />
+      </span>
+      <div className="min-w-0">
         <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
-        <div className="mt-0.5">{children}</div>
+        <p className="truncate font-semibold">{value}</p>
       </div>
-    </li>
+    </div>
   )
-}
-
-function SocialLink({ href, icon, label }: { href: string; icon: string; label: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground"
-    >
-      <Icon name={icon} size={16} />
-    </a>
-  )
+  if (href) {
+    return (
+      <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+        {inner}
+      </a>
+    )
+  }
+  return inner
 }

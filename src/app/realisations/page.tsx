@@ -3,6 +3,7 @@ import { Icon } from '@/lib/icon'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SectionHeading } from '@/components/site/section-heading'
+import { EmptyState } from '@/components/site/empty-state'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -84,13 +85,13 @@ export default async function RealisationsPage({
           )}
 
           {realisations.length === 0 ? (
-            <div className="mx-auto max-w-xl rounded-2xl border border-dashed border-border bg-muted/20 p-12 text-center">
-              <Icon name="FaImages" size={40} className="mx-auto text-muted-foreground/40" />
-              <h2 className="mt-4 text-lg font-bold">Réalisations à venir</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Les réalisations seront publiées prochainement.
-              </p>
-            </div>
+            <EmptyState
+              icon="FaImages"
+              title="Réalisations à venir"
+              description="Nos projets seront bientôt publiés ici. En attendant, découvrez nos services ou contactez-nous pour discuter de votre projet."
+              actionLabel="Voir nos services"
+              actionHref="/services"
+            />
           ) : (
             <>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -4,6 +4,9 @@ import { HeroSlider } from '@/components/site/hero-slider'
 import { ServiceCard } from '@/components/site/service-card'
 import { PartnersMarquee } from '@/components/site/partners-marquee'
 import { SectionHeading } from '@/components/site/section-heading'
+import { Reveal, RevealGroup, RevealItem } from '@/components/site/reveal'
+import { EmptyState } from '@/components/site/empty-state'
+import { RichBackground, HeroDecor, PathLines, DotGrid, FloatingShapes, WaveDivider } from '@/components/site/decor-background'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -15,31 +18,12 @@ export const revalidate = 60
 export default async function HomePage() {
   const [slides, services, stats, engagements, realisations, partners, settings] =
     await Promise.all([
-      db.slide.findMany({
-        where: { isPublished: true },
-        orderBy: { order: 'asc' },
-      }),
-      db.service.findMany({
-        where: { isPublished: true, isSubcontracting: false },
-        orderBy: { order: 'asc' },
-      }),
-      db.siteStat.findMany({
-        where: { isPublished: true },
-        orderBy: { order: 'asc' },
-      }),
-      db.engagement.findMany({
-        where: { isPublished: true },
-        orderBy: { order: 'asc' },
-      }),
-      db.realisation.findMany({
-        where: { isPublished: true, publishedAt: { lte: new Date() } },
-        orderBy: { publishedAt: 'desc' },
-        take: 3,
-      }),
-      db.partner.findMany({
-        where: { isPublished: true },
-        orderBy: { order: 'asc' },
-      }),
+      db.slide.findMany({ where: { isPublished: true }, orderBy: { order: 'asc' } }),
+      db.service.findMany({ where: { isPublished: true, isSubcontracting: false }, orderBy: { order: 'asc' } }),
+      db.siteStat.findMany({ where: { isPublished: true }, orderBy: { order: 'asc' } }),
+      db.engagement.findMany({ where: { isPublished: true }, orderBy: { order: 'asc' } }),
+      db.realisation.findMany({ where: { isPublished: true, publishedAt: { lte: new Date() } }, orderBy: { publishedAt: 'desc' }, take: 3 }),
+      db.partner.findMany({ where: { isPublished: true }, orderBy: { order: 'asc' } }),
       getSiteSettings(),
     ])
 
@@ -47,12 +31,12 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero slider */}
+      {/* ─── Hero slider ─── */}
       {slides.length > 0 ? (
         <HeroSlider slides={slides as any} />
       ) : (
-        <section className="relative flex h-[60vh] min-h-[420px] items-center justify-center bg-primary text-primary-foreground">
-          <div className="bg-ellipse-dtk" aria-hidden="true" />
+        <section className="relative flex h-[60vh] min-h-[420px] items-center justify-center overflow-hidden bg-primary text-primary-foreground">
+          <HeroDecor />
           <div className="relative z-10 text-center px-4">
             <h1 className="text-3xl font-extrabold md:text-5xl">{settings?.siteName}</h1>
             <p className="mt-3 text-lg text-primary-foreground/80">{settings?.slogan}</p>
@@ -60,200 +44,244 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Intro / présentation courte */}
-      <section className="relative py-16 md:py-24">
-        <div className="bg-grid-dtk absolute inset-0 opacity-50" aria-hidden="true" />
-        <div className="container relative mx-auto px-4 md:px-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
+      {/* ─── Intro ─── */}
+      <section className="relative overflow-hidden section-padding">
+        <RichBackground />
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
+          <Reveal direction="up" className="mx-auto max-w-3xl text-center">
+            <p className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
+              <span className="h-px w-8 bg-accent/40" />
               {settings?.siteName || 'DTK Corporation SARL'}
+              <span className="h-px w-8 bg-accent/40" />
             </p>
             <h2 className="text-2xl font-bold leading-tight md:text-4xl">
-              Une entreprise guinéenne pluridisciplinaire, engagée sur ses valeurs
+              Une entreprise guinéenne pluridisciplinaire,{' '}
+              <span className="text-gradient-dtk">engagée sur ses valeurs</span>
             </h2>
             <p className="mt-4 text-muted-foreground md:text-lg">
               DTK Corporation SARL intervient dans six domaines complémentaires — BTP,
               agro-alimentaire, formation, élevage, froid et sous-traitance — au service
-              du développement de la Guinée. Notre slogan guide chacune de nos interventions :
-              <span className="font-semibold text-foreground"> Professionnalisme, Qualité, Satisfaction.</span>
+              du développement de la Guinée.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <Button asChild>
+              <Button asChild size="lg">
                 <Link href="/a-propos">
                   <Icon name="FaUsers" size={16} className="mr-2" />
-                  En savoir plus sur nous
+                  En savoir plus
                 </Link>
               </Button>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" size="lg">
                 <Link href="/contact">
                   <Icon name="FaPaperPlane" size={16} className="mr-2" />
                   Faire une demande
                 </Link>
               </Button>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Services */}
-      <section className="bg-muted/30 py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
+      {/* ─── Services ─── */}
+      <section className="relative overflow-hidden bg-muted/30 section-padding">
+        <DotGrid className="opacity-60" />
+        <FloatingShapes />
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
           <SectionHeading
             eyebrow="Nos expertises"
             title="Six domaines d'intervention"
             description="Du BTP au froid, en passant par l'agro-alimentaire et la formation, nous accompagnons les particuliers, les entreprises et les institutions dans toute la Guinée."
           />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s, i) => (
-              <ServiceCard key={s.id} service={s as any} index={i} />
+          <RevealGroup className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+            {services.map((s) => (
+              <RevealItem key={s.id}>
+                <ServiceCard service={s as any} />
+              </RevealItem>
             ))}
-          </div>
-          <div className="mt-10 text-center">
+          </RevealGroup>
+          <Reveal direction="up" className="mt-10 text-center">
             <Button asChild variant="outline" size="lg">
               <Link href="/services">
                 <Icon name="FaList" size={16} className="mr-2" />
                 Voir tous les services
               </Link>
             </Button>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Engagements QHSSE */}
+      {/* ─── Engagements QHSSE ─── */}
       {engagements.length > 0 && (
-        <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-24">
-          <div className="bg-ellipse-dtk" aria-hidden="true" />
-          <div className="container relative mx-auto px-4 md:px-6">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-accent">
-                Nos engagements
-              </p>
-              <h2 className="text-2xl font-bold md:text-4xl">Politique QHSSE</h2>
-              <p className="mt-3 text-primary-foreground/80 md:text-lg">
-                Trois principes non négociables qui guident chacune de nos interventions.
-              </p>
-            </div>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
+          <HeroDecor />
+          <div className="container relative z-10 mx-auto px-4 md:px-6">
+            <SectionHeading
+              eyebrow="Nos engagements"
+              title="Politique QHSSE"
+              description="Trois principes non négociables qui guident chacune de nos interventions."
+            />
+            <RevealGroup className="mt-12 grid gap-6 md:grid-cols-3" stagger={0.1}>
               {engagements.map((e) => (
-                <div
-                  key={e.id}
-                  className="rounded-xl border border-primary-foreground/15 bg-primary-foreground/5 p-6 text-center backdrop-blur"
-                >
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                    <Icon name={e.iconKey || 'FaShieldAlt'} size={24} />
+                <RevealItem key={e.id}>
+                  <div className="group relative overflow-hidden rounded-2xl border border-primary-foreground/15 bg-primary-foreground/5 p-8 text-center backdrop-blur transition-all hover:bg-primary-foreground/10 hover:border-accent/40">
+                    <div className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-accent/20 blur-2xl" />
+                    </div>
+                    <div className="relative z-10">
+                      <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent text-accent-foreground shadow-lg transition-transform group-hover:scale-110">
+                        <Icon name={e.iconKey || 'FaShieldAlt'} size={28} />
+                      </div>
+                      <h3 className="text-lg font-bold">{e.title}</h3>
+                      <p className="mt-2 text-sm text-primary-foreground/80">{e.description}</p>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold">{e.title}</h3>
-                  <p className="mt-2 text-sm text-primary-foreground/80">{e.description}</p>
-                </div>
+                </RevealItem>
               ))}
-            </div>
+            </RevealGroup>
           </div>
         </section>
       )}
 
-      {/* Chiffres (only if published) */}
+      {/* ─── Chiffres ─── */}
       {stats.length > 0 && (
-        <section className="py-16 md:py-20">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="relative overflow-hidden section-padding">
+          <PathLines />
+          <div className="container relative z-10 mx-auto px-4 md:px-6">
+            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
               {stats.map((s) => (
-                <div key={s.id} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/15 text-accent">
-                    <Icon name={s.iconKey || 'FaChartLine'} size={20} />
+                <RevealItem key={s.id}>
+                  <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 text-center shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                    <div className="relative z-10">
+                      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-accent/15 text-accent transition-transform group-hover:scale-110">
+                        <Icon name={s.iconKey || 'FaChartLine'} size={22} />
+                      </div>
+                      <p className="text-4xl font-extrabold text-gradient-dtk">{s.value}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
+                    </div>
                   </div>
-                  <p className="text-3xl font-extrabold text-primary">{s.value}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
-                </div>
+                </RevealItem>
               ))}
-            </div>
+            </RevealGroup>
           </div>
         </section>
       )}
 
-      {/* Réalisations preview */}
-      {realisations.length > 0 && (
-        <section className="bg-muted/30 py-16 md:py-24">
-          <div className="container mx-auto px-4 md:px-6">
+      {/* ─── Réalisations ─── */}
+      {realisations.length > 0 ? (
+        <section className="relative overflow-hidden bg-muted/30 section-padding">
+          <DotGrid className="opacity-50" />
+          <div className="container relative z-10 mx-auto px-4 md:px-6">
             <SectionHeading
               eyebrow="Portfolio"
               title="Nos réalisations"
               description="Un aperçu de projets menés par DTK Corporation."
             />
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <RevealGroup className="mt-12 grid gap-6 md:grid-cols-3" stagger={0.1}>
               {realisations.map((r) => (
-                <Link
-                  key={r.id}
-                  href={`/realisations/${r.slug}`}
-                  className="group relative overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="relative h-56 overflow-hidden">
-                    {r.coverUrl ? (
-                      <Image
-                        src={r.coverUrl}
-                        alt={r.coverAlt || r.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center bg-primary/10">
-                        <Icon name="FaBuilding" size={48} className="text-primary/40" />
-                      </div>
-                    )}
-                    {r.category && (
-                      <span className="absolute top-3 left-3 rounded-full bg-primary/85 px-3 py-1 text-xs font-medium text-primary-foreground backdrop-blur">
-                        {r.category}
+                <RevealItem key={r.id}>
+                  <Link
+                    href={`/realisations/${r.slug}`}
+                    className="group relative block overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:-translate-y-2 hover:shadow-2xl"
+                  >
+                    <div className="relative h-56 overflow-hidden">
+                      {r.coverUrl ? (
+                        <Image
+                          src={r.coverUrl}
+                          alt={r.coverAlt || r.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center bg-primary/10">
+                          <Icon name="FaBuilding" size={48} className="text-primary/40" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                      {r.category && (
+                        <span className="absolute top-3 left-3 rounded-full bg-primary/85 px-3 py-1 text-xs font-medium text-primary-foreground backdrop-blur">
+                          {r.category}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold leading-snug group-hover:text-accent transition-colors">{r.title}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{r.excerpt}</p>
+                      <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-accent">
+                        Découvrir
+                        <Icon name="FaArrowRight" size={12} className="transition-transform group-hover:translate-x-1" />
                       </span>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold leading-snug group-hover:text-accent transition-colors">{r.title}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{r.excerpt}</p>
-                  </div>
-                </Link>
+                    </div>
+                  </Link>
+                </RevealItem>
               ))}
-            </div>
-            <div className="mt-10 text-center">
+            </RevealGroup>
+            <Reveal direction="up" className="mt-10 text-center">
               <Button asChild variant="outline" size="lg">
                 <Link href="/realisations">
                   <Icon name="FaImages" size={16} className="mr-2" />
                   Voir toutes les réalisations
                 </Link>
               </Button>
-            </div>
+            </Reveal>
+          </div>
+        </section>
+      ) : (
+        <section className="relative section-padding">
+          <div className="container mx-auto px-4 md:px-6">
+            <EmptyState
+              icon="FaImages"
+              title="Réalisations à venir"
+              description="Nos projets seront bientôt mis en ligne. En attendant, découvrez nos services ou contactez-nous."
+              actionLabel="Découvrir nos services"
+              actionHref="/services"
+            />
           </div>
         </section>
       )}
 
-      {/* Partenaires */}
+      {/* ─── Partenaires ─── */}
       {partners.length > 0 && (
-        <section className="py-16 md:py-20">
-          <div className="container mx-auto px-4 md:px-6">
+        <section className="relative overflow-hidden py-16 md:py-20">
+          <RichBackground />
+          <div className="container relative z-10 mx-auto px-4 md:px-6">
             <SectionHeading
               eyebrow="Confiance"
               title="Nos partenaires"
               description="Ils nous font confiance."
             />
-            <div className="mt-10">
+            <Reveal direction="up" className="mt-10">
               <PartnersMarquee partners={partners as any} />
-            </div>
+            </Reveal>
           </div>
         </section>
       )}
 
-      {/* CTA */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary to-[#08A9E8] py-16 text-primary-foreground md:py-24">
-        <div className="container relative mx-auto px-4 md:px-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-2xl font-bold md:text-4xl">
-              Un projet en tête ? Parlons-en.
+      {/* ─── CTA final ─── */}
+      <section className="relative overflow-hidden py-20 md:py-28">
+        {/* Background image with overlay */}
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=70"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 via-[#101B91]/85 to-[#08A9E8]/80" />
+          <HeroDecor />
+        </div>
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
+          <Reveal direction="scale" className="mx-auto max-w-3xl text-center text-primary-foreground">
+            <h2 className="text-3xl font-bold md:text-5xl">
+              Un projet en tête ?
             </h2>
-            <p className="mt-3 text-primary-foreground/90 md:text-lg">
+            <p className="mt-4 text-lg text-primary-foreground/90 md:text-xl">
               Demande de devis, inscription à une formation, sous-traitance ou simple
               renseignement : un seul formulaire, un seul point d'entrée.
             </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" variant="secondary">
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Button asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
                 <Link href="/contact">
                   <Icon name="FaPaperPlane" size={16} className="mr-2" />
                   Faire une demande
@@ -268,8 +296,9 @@ export default async function HomePage() {
                 </Button>
               )}
             </div>
-          </div>
+          </Reveal>
         </div>
+        <WaveDivider color="var(--background)" />
       </section>
     </>
   )

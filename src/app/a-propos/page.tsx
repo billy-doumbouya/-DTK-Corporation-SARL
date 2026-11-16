@@ -1,6 +1,8 @@
 import { db } from '@/lib/db'
 import { getSiteSettings, splitList } from '@/lib/settings'
 import { SectionHeading } from '@/components/site/section-heading'
+import { Reveal, RevealGroup, RevealItem } from '@/components/site/reveal'
+import { RichBackground, HeroDecor, DotGrid, PathLines } from '@/components/site/decor-background'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -46,24 +48,26 @@ export default async function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-24">
-        <div className="bg-ellipse-dtk" aria-hidden="true" />
-        <div className="container relative mx-auto px-4 md:px-6">
-          <div className="max-w-3xl">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-accent">
+      <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
+        <HeroDecor />
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
+          <Reveal direction="up" className="max-w-3xl">
+            <p className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
+              <span className="h-px w-8 bg-accent/60" />
               À propos
             </p>
-            <h1 className="text-3xl font-extrabold md:text-5xl">{settings?.siteName || 'DTK Corporation SARL'}</h1>
-            <p className="mt-3 text-lg text-primary-foreground/85 md:text-xl">
+            <h1 className="text-4xl font-extrabold md:text-6xl">{settings?.siteName || 'DTK Corporation SARL'}</h1>
+            <p className="mt-4 text-lg text-primary-foreground/85 md:text-xl">
               {settings?.slogan}
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Présentation */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="relative overflow-hidden section-padding">
+        <RichBackground />
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
               <SectionHeading
@@ -127,24 +131,30 @@ export default async function AboutPage() {
       </section>
 
       {/* Valeurs */}
-      <section className="bg-muted/30 py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="relative overflow-hidden bg-muted/30 section-padding">
+        <DotGrid className="opacity-60" />
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
           <SectionHeading
             eyebrow="Nos valeurs"
             title="Professionnalisme, Qualité, Satisfaction"
             description="Trois valeurs qui guident chacune de nos décisions et de nos interventions."
           />
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <RevealGroup className="mt-12 grid gap-6 md:grid-cols-3" stagger={0.1}>
             {values.map((v) => (
-              <div key={v.title} className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/15 text-accent">
-                  <Icon name={v.icon} size={22} />
+              <RevealItem key={v.title}>
+                <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
+                  <div className="absolute -top-8 -right-8 h-24 w-24 rounded-full bg-accent/10 blur-2xl opacity-0 transition-opacity group-hover:opacity-100" />
+                  <div className="relative z-10">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-primary/10 text-accent transition-transform group-hover:scale-110">
+                      <Icon name={v.icon} size={24} />
+                    </div>
+                    <h3 className="text-lg font-bold">{v.title}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{v.desc}</p>
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold">{v.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{v.desc}</p>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -158,20 +168,19 @@ export default async function AboutPage() {
               title="Notre politique qualité, hygiène, sécurité, environnement"
               description="Trois principes non négociables au cœur de notre démarche."
             />
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <RevealGroup className="mt-12 grid gap-6 md:grid-cols-3" stagger={0.1}>
               {engagements.map((e) => (
-                <div
-                  key={e.id}
-                  className="rounded-xl border border-primary-foreground/15 bg-primary-foreground/5 p-6 text-center backdrop-blur"
-                >
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                    <Icon name={e.iconKey || 'FaShieldAlt'} size={24} />
+                <RevealItem key={e.id}>
+                  <div className="group relative overflow-hidden rounded-2xl border border-primary-foreground/15 bg-primary-foreground/5 p-8 text-center backdrop-blur transition-all hover:bg-primary-foreground/10 hover:border-accent/40">
+                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent text-accent-foreground shadow-lg transition-transform group-hover:scale-110">
+                      <Icon name={e.iconKey || 'FaShieldAlt'} size={28} />
+                    </div>
+                    <h3 className="text-lg font-bold">{e.title}</h3>
+                    <p className="mt-2 text-sm text-primary-foreground/80">{e.description}</p>
                   </div>
-                  <h3 className="text-lg font-bold">{e.title}</h3>
-                  <p className="mt-2 text-sm text-primary-foreground/80">{e.description}</p>
-                </div>
+                </RevealItem>
               ))}
-            </div>
+            </RevealGroup>
           </div>
         </section>
       )}

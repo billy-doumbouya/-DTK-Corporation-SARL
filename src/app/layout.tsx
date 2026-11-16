@@ -8,6 +8,8 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { AuthShortcut } from "@/components/site/auth-shortcut";
 import { NavProgress } from "@/components/site/nav-progress";
 import { ChatbotWidget } from "@/components/site/chatbot-widget";
+import { WhatsAppWidget } from "@/components/site/whatsapp-widget";
+import { SocialSidebar } from "@/components/site/social-sidebar";
 import { ConditionalChrome } from "@/components/site/conditional-chrome";
 import { getSiteSettings } from "@/lib/settings";
 import { db } from "@/lib/db";
@@ -39,18 +41,8 @@ export async function generateMetadata(): Promise<Metadata> {
       settings?.defaultSeoDescription ||
       "Entreprise guinéenne pluridisciplinaire : BTP, agro-alimentaire, formation, élevage et froid.",
     keywords: [
-      "DTK Corporation",
-      "Guinée",
-      "BTP",
-      "agro-alimentaire",
-      "riz guinéen",
-      "formation",
-      "climatisation",
-      "sous-traitance",
-      "Conakry",
-      "Kankan",
-      "Siguiri",
-      "Dinguiraye",
+      "DTK Corporation", "Guinée", "BTP", "agro-alimentaire", "riz guinéen",
+      "formation", "climatisation", "sous-traitance", "Conakry", "Kankan", "Siguiri", "Dinguiraye",
     ],
     authors: [{ name: "DTK Corporation SARL" }],
     creator: "DTK Corporation SARL",
@@ -105,17 +97,30 @@ export default async function RootLayout({
         className={`${sora.variable} ${inter.variable} antialiased bg-background text-foreground`}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <div className="flex min-h-screen flex-col">
+          {/* Flex column: header → main (grows) → footer (bottom) */}
+          <div className="relative flex min-h-screen flex-col">
             <NavProgress />
             <AuthShortcut />
+            {/* Header (hidden on dashboard/auth) */}
             <ConditionalChrome>
               <SiteHeader services={services as any} settings={settings as any} />
-              <SiteFooter settings={settings as any} />
+            </ConditionalChrome>
+            {/* Social sidebar (hidden on dashboard/auth) */}
+            <ConditionalChrome>
+              <SocialSidebar settings={settings as any} />
+            </ConditionalChrome>
+            {/* Main content fills available space */}
+            <main className="flex-1 flex flex-col">{children}</main>
+            {/* Footer + floating widgets (hidden on dashboard/auth) */}
+            <ConditionalChrome>
               {settings?.chatbotEnabled !== false && (
                 <ChatbotWidget settings={settings as any} />
               )}
+              {settings?.whatsapp && (
+                <WhatsAppWidget whatsapp={settings.whatsapp} />
+              )}
+              <SiteFooter settings={settings as any} />
             </ConditionalChrome>
-            <main className="flex-1">{children}</main>
           </div>
         </ThemeProvider>
         <Toaster />
