@@ -56,7 +56,7 @@ export default async function ContactPage() {
             alt=""
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 via-[#101B91]/80 to-[#08A9E8]/70" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 via-[#101B91]/15 to-[#08A9E8]/20" />
           <HeroDecor />
         </div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">

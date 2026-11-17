@@ -152,7 +152,7 @@ async function main() {
       description:
         "DTK Corporation intervient dans le secteur du Bâtiment et des Travaux Publics en Guinée. De la construction neuve à la rénovation, nous accompagnons nos clients sur l'ensemble du cycle projet : étude, exécution, suivi de chantier et livraison.\n\nNos équipes appliquent une politique QHSSE stricte : zéro accident, zéro dommage pour l'environnement, zéro compromis sur la qualité.\n\nContenu provisoire — à compléter par l'administrateur.",
       iconKey: 'FaBuilding',
-      coverUrl: UNSPLASH('photo-1503387762-592deb58ef4e'),
+      coverUrl: '/images/service-btp.webp',
       coverAlt: 'Chantier de construction',
       order: 1,
       zones: 'Conakry, Kankan, Siguiri, Dinguiraye',
@@ -172,7 +172,7 @@ async function main() {
       description:
         "Notre projet agro-alimentaire vise à transformer et valoriser le riz guinéen ainsi que les produits agricoles locaux en Haute-Guinée, dans les zones de Dinguiraye, Banora et M'Bonet.\n\nL'objectif est de soutenir les producteurs locaux tout en offrant un produit de qualité aux consommateurs guinéens.\n\nContenu provisoire — à compléter par l'administrateur.",
       iconKey: 'FaSeedling',
-      coverUrl: UNSPLASH('photo-1574323347407-f5e1ad6d020b'),
+      coverUrl: '/images/service-agro.webp',
       coverAlt: 'Rizière et grains de riz',
       order: 2,
       zones: "Dinguiraye, Banora, M'Bonet (Haute-Guinée)",
@@ -191,7 +191,7 @@ async function main() {
       description:
         "DTK Corporation propose des formations de deux à trois mois, destinées aux jeunes diplômés ainsi qu'aux professionnels en activité souhaitant renforcer leurs compétences.\n\nLes thématiques précises sont définies en fonction des besoins du marché guinéen et des domaines d'activité de l'entreprise.\n\nContenu provisoire — à compléter par l'administrateur.",
       iconKey: 'FaGraduationCap',
-      coverUrl: UNSPLASH('photo-1523050854058-8df90110c9f1'),
+      coverUrl: '/images/service-formation.webp',
       coverAlt: 'Session de formation',
       order: 3,
       zones: 'Conakry, Kankan',
@@ -210,7 +210,7 @@ async function main() {
       description:
         "DTK Corporation développe des activités d'élevage et de valorisation des produits qui en découlent, en soutenant l'économie agricole locale guinéenne.\n\nContenu provisoire — à compléter par l'administrateur.",
       iconKey: 'FaPaw',
-      coverUrl: UNSPLASH('photo-1500595046743-cd271d694d30'),
+      coverUrl: '/images/service-elevage.webp',
       coverAlt: "Animaux d'élevage",
       order: 4,
       zones: 'Guinée',
@@ -228,7 +228,7 @@ async function main() {
       description:
         "DTK Corporation assure la vente, l'installation, la maintenance et le dépannage de systèmes de climatisation, pour les particuliers comme pour les professionnels.\n\nNos techniciens interviennent rapidement sur l'ensemble des zones d'intervention de l'entreprise.\n\nContenu provisoire — à compléter par l'administrateur.",
       iconKey: 'FaSnowflake',
-      coverUrl: UNSPLASH('photo-1581094794329-c8112a89af12'),
+      coverUrl: '/images/service-froid.webp',
       coverAlt: 'Unité de climatisation',
       order: 5,
       zones: 'Conakry, Kankan, Siguiri, Dinguiraye',
@@ -248,7 +248,7 @@ async function main() {
       description:
         "DTK Corporation peut travailler en sous-traitance pour des donneurs d'ordre dans l'ensemble de ses domaines d’expertise : BTP, agro-alimentaire, formation, élevage et froid.\n\nSi vous souhaitez nous confier une mission, utilisez le formulaire dédié accessible depuis le menu « Sous-traitance générale ».",
       iconKey: 'FaHandshake',
-      coverUrl: UNSPLASH('photo-1521791136064-7986c2920216'),
+      coverUrl: '/images/sous-traitance-template.webp',
       coverAlt: "Poignée de main — sous-traitance",
       order: 6,
       isSubcontracting: true,
@@ -481,6 +481,16 @@ async function main() {
       imageAlt: 'Experts pluridisciplinaires DTK',
       order: 5,
     },
+    {
+      title: 'Valorisons le riz guinéen',
+      subtitle:
+        'Une femme guinéenne dans sa rizière. DTK Corporation transforme et valorise le riz local en Haute-Guinée.',
+      buttonText: 'Notre projet agro',
+      buttonHref: '/services/agro-alimentaire',
+      imageUrl: '/images/rice-field-lady.webp',
+      imageAlt: 'Femme dans une rizière en Guinée',
+      order: 6,
+    },
   ]
   for (const s of slides) {
     const existing = await db.slide.findFirst({ where: { title: s.title } })
@@ -533,7 +543,7 @@ async function main() {
         'Élevage',
         'Froid / Climatisation',
       ]),
-      imageUrl: UNSPLASH('photo-1521791136064-7986c2920216'),
+      imageUrl: '/images/sous-traitance-template.webp',
       imageAlt: 'Sous-traitance générale — collaboration',
     },
   })

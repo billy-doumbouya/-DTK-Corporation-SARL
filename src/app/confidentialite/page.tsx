@@ -62,9 +62,9 @@ export default async function PrivacyPage() {
           <img
             src="/images/abstract-waves.webp"
             alt=""
-            className="h-full w-full object-cover opacity-20"
+            className="h-full w-full object-cover opacity-70"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#101B91]/95 to-[#08A9E8]/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#101B91]/30 to-[#08A9E8]/20" />
           <FloatingShapes />
         </div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">

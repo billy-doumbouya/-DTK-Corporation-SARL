@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import {
@@ -61,6 +61,15 @@ export function SiteHeader({
 }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  // Hide top utility bar on scroll (smooth)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const coreServices = services.filter((s) => !s.isSubcontracting)
 
@@ -72,9 +81,14 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-40 w-full shadow-md">
-      {/* ─── Tier 1: Utility bar (navy) ─── */}
+      {/* ─── Tier 1: Utility bar (navy) — hides on scroll ─── */}
       {(hasContactInfo || hasSocial) && (
-        <div className="hidden bg-primary text-primary-foreground lg:block">
+        <div
+          className={cn(
+            'hidden bg-primary text-primary-foreground transition-all duration-300 ease-in-out lg:block overflow-hidden',
+            scrolled ? 'max-h-0 opacity-0' : 'max-h-12 opacity-100'
+          )}
+        >
           <div className="container mx-auto flex h-9 items-center justify-between px-6 text-xs">
             {/* Left: contact info */}
             <div className="flex items-center gap-4">

@@ -75,6 +75,7 @@ import {
   FaNewspaper,
   FaGlobe,
   FaWrench,
+  FaSignInAlt,
 } from 'react-icons/fa'
 
 /**
@@ -96,7 +97,7 @@ const ICON_MAP: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   FaCircleNotch, FaExclamationTriangle, FaInfoCircle, FaCheck,
   FaChevronRight, FaChevronLeft, FaChevronDown, FaChevronUp,
   FaAngleRight, FaAngleDown, FaList, FaTh, FaThLarge, FaPrint, FaShareAlt,
-  FaSun, FaMoon, FaNewspaper, FaGlobe, FaWrench,
+  FaSun, FaMoon, FaNewspaper, FaGlobe, FaWrench, FaSignInAlt,
 }
 
 export type IconKey = keyof typeof ICON_MAP
