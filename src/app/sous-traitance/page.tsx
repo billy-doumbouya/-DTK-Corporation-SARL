@@ -30,7 +30,7 @@ export default async function SubcontractingPage() {
             <Image src={page.imageUrl} alt={page.imageAlt || 'Sous-traitance générale'} fill priority sizes="100vw" className="object-cover" />
           ) : (
             <img
-              src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1920&q=70"
+              src="/images/subcontracting-bg.webp"
               alt=""
               className="h-full w-full object-cover"
             />

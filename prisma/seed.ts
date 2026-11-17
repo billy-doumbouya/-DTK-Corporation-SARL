@@ -244,9 +244,9 @@ async function main() {
       title: 'Sous-traitance générale',
       shortTitle: 'Sous-traitance générale',
       excerpt:
-        "DTK Corporation travaille en sous-traitance pour des donneurs d'ordre dans ses domaines d'expertise.",
+        "DTK Corporation travaille en sous-traitance pour des donneurs d'ordre dans ses domaines d’expertise.",
       description:
-        "DTK Corporation peut travailler en sous-traitance pour des donneurs d'ordre dans l'ensemble de ses domaines d'expertise : BTP, agro-alimentaire, formation, élevage et froid.\n\nSi vous souhaitez nous confier une mission, utilisez le formulaire dédié accessible depuis le menu « Sous-traitance générale ».",
+        "DTK Corporation peut travailler en sous-traitance pour des donneurs d'ordre dans l'ensemble de ses domaines d’expertise : BTP, agro-alimentaire, formation, élevage et froid.\n\nSi vous souhaitez nous confier une mission, utilisez le formulaire dédié accessible depuis le menu « Sous-traitance générale ».",
       iconKey: 'FaHandshake',
       coverUrl: UNSPLASH('photo-1521791136064-7986c2920216'),
       coverAlt: "Poignée de main — sous-traitance",
@@ -437,8 +437,8 @@ async function main() {
         'Une entreprise guinéenne pluridisciplinaire au service de votre projet : BTP, agro-alimentaire, formation, élevage et froid.',
       buttonText: 'Découvrir nos services',
       buttonHref: '/services',
-      imageUrl: UNSPLASH('photo-1503387762-592deb58ef4e'),
-      imageAlt: 'Chantier de construction',
+      imageUrl: '/images/services-bg.webp',
+      imageAlt: 'Services DTK Corporation',
       order: 1,
     },
     {
@@ -447,8 +447,8 @@ async function main() {
         'Transformation et valorisation des produits agricoles locaux en Haute-Guinée (Dinguiraye, Banora, M\'Bonet).',
       buttonText: 'En savoir plus',
       buttonHref: '/services/agro-alimentaire',
-      imageUrl: UNSPLASH('photo-1574323347407-f5e1ad6d020b'),
-      imageAlt: 'Rizière',
+      imageUrl: '/images/elevage-cattle.webp',
+      imageAlt: 'Agriculture et élevage en Guinée',
       order: 2,
     },
     {
@@ -457,14 +457,38 @@ async function main() {
         'Vente, installation, maintenance et dépannage de climatisation par des techniciens qualifiés.',
       buttonText: 'Demander un dépannage',
       buttonHref: '/contact?type=devis',
-      imageUrl: UNSPLASH('photo-1581094794329-c8112a89af12'),
-      imageAlt: 'Unité de climatisation',
+      imageUrl: '/images/subcontracting-bg.webp',
+      imageAlt: 'Bâtiment et climatisation',
       order: 3,
+    },
+    {
+      title: 'Une équipe pluridisciplinaire à votre service',
+      subtitle:
+        'Professionnels du BTP, de l’agro-alimentaire, de la formation et du froid — une équipe engagée pour la Guinée.',
+      buttonText: 'Découvrir l’équipe',
+      buttonHref: '/a-propos',
+      imageUrl: '/images/about-team.webp',
+      imageAlt: 'Équipe DTK Corporation',
+      order: 4,
+    },
+    {
+      title: 'De l’agriculture au numérique',
+      subtitle:
+        'Six domaines d’expertise pour accompagner le développement de la Guinée : BTP, agro, formation, élevage, froid et solutions numériques.',
+      buttonText: 'Nos expertises',
+      buttonHref: '/services',
+      imageUrl: '/images/team-pro.webp',
+      imageAlt: 'Experts pluridisciplinaires DTK',
+      order: 5,
     },
   ]
   for (const s of slides) {
     const existing = await db.slide.findFirst({ where: { title: s.title } })
-    if (!existing) await db.slide.create({ data: s })
+    if (existing) {
+      await db.slide.update({ where: { id: existing.id }, data: s })
+    } else {
+      await db.slide.create({ data: s })
+    }
   }
 
   // ─── Engagements QHSSE ───────────────────────────────────────────────────
@@ -501,7 +525,7 @@ async function main() {
       id: 'singleton',
       headline: 'Sous-traitance générale',
       intro:
-        "DTK Corporation SARL travaille en sous-traitance pour des donneurs d'ordre dans ses domaines d'expertise : BTP, agro-alimentaire, formation, élevage et froid. Confiez-nous une mission via le formulaire dédié, nous vous répondons rapidement.",
+        "DTK Corporation SARL travaille en sous-traitance pour des donneurs d'ordre dans ses domaines d’expertise : BTP, agro-alimentaire, formation, élevage et froid. Confiez-nous une mission via le formulaire dédié, nous vous répondons rapidement.",
       domains: JSON.stringify([
         'BTP — Bâtiment et Travaux Publics',
         'Agro-alimentaire',
@@ -662,7 +686,7 @@ async function main() {
     {
       question: "Proposez-vous la sous-traitance ?",
       answer:
-        "Oui. DTK Corporation travaille en sous-traitance dans tous ses domaines d'expertise. Utilisez le formulaire dédié accessible depuis le menu « Sous-traitance générale » pour décrire votre besoin.",
+        "Oui. DTK Corporation travaille en sous-traitance dans tous ses domaines d’expertise. Utilisez le formulaire dédié accessible depuis le menu « Sous-traitance générale » pour décrire votre besoin.",
       keywords: 'sous-traitance, collaboration, donneur d\'ordre, mission',
       order: 5,
     },

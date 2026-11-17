@@ -26,7 +26,7 @@ export default async function ProductsPage() {
     <>
       <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
         <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-20" />
+          <img src="/images/elevage-cattle.webp" alt="" className="h-full w-full object-cover opacity-20" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 to-[#101B91]/80" />
         </div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">

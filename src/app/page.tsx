@@ -262,7 +262,7 @@ export default async function HomePage() {
         {/* Background image with overlay */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=70"
+            src="/images/team-pro.webp"
             alt=""
             fill
             sizes="100vw"

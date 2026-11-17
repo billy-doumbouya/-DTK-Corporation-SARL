@@ -27,7 +27,7 @@ export default async function PartnersPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
         <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-20" />
+          <img src="/images/partners-bg.webp" alt="" className="h-full w-full object-cover opacity-20" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 to-[#101B91]/80" />
         </div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
@@ -129,7 +129,7 @@ export default async function PartnersPage() {
       {/* CTA become a partner */}
       <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
         <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-15" />
+          <img src="/images/subcontracting-bg.webp" alt="" className="h-full w-full object-cover opacity-15" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 to-[#08A9E8]/70" />
           <FloatingShapes />
         </div>

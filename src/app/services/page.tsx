@@ -29,7 +29,7 @@ export default async function ServicesPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-20" />
+          <img src="/images/services-bg.webp" alt="" className="h-full w-full object-cover opacity-20" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 via-[#101B91]/85 to-[#08A9E8]/60" />
           <div className="absolute -top-20 -right-20 h-[30rem] w-[30rem] rounded-full bg-[#08A9E8] opacity-[0.15] blur-[120px]" />
         </div>

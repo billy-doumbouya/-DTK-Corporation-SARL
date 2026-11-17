@@ -54,10 +54,19 @@ export default function AuthLoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
-      <div className="bg-ellipse-dtk" aria-hidden="true" />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img
+          src="/images/auth-bg.webp"
+          alt=""
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/90 via-[#101B91]/70 to-[#08A9E8]/60" />
+      </div>
+      {/* Login form overlaid */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
+        <div className="rounded-2xl border border-white/20 bg-card/95 p-8 shadow-2xl backdrop-blur-xl">
           <div className="mb-6 text-center">
             { }
             <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="mx-auto h-12 w-auto" />

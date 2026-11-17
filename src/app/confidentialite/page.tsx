@@ -60,7 +60,7 @@ export default async function PrivacyPage() {
       <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1920&q=60"
+            src="/images/abstract-waves.webp"
             alt=""
             className="h-full w-full object-cover opacity-20"
           />

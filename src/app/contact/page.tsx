@@ -52,7 +52,7 @@ export default async function ContactPage() {
       <section className="relative flex h-[50vh] min-h-[380px] items-center overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1423666639041-f56000c53a55?auto=format&fit=crop&w=1920&q=70"
+            src="/images/contact-service.webp"
             alt=""
             className="h-full w-full object-cover"
           />
