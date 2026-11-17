@@ -27,7 +27,7 @@ const NAV: NavItem[] = [
   { href: '/dashboard/partners', label: 'Partenaires', icon: 'FaHandshake', group: 'Accueil' },
   { href: '/dashboard/engagements', label: 'Engagements', icon: 'FaShieldAlt', group: 'Accueil' },
   { href: '/dashboard/stats', label: 'Chiffres', icon: 'FaChartLine', group: 'Accueil' },
-  { href: '/dashboard/subcontracting', label: 'Sous-traitance', icon: 'FaHandshake', group: 'Accueil' },
+  { href: '/dashboard/subcontracting', label: 'Sous-traitance générale', icon: 'FaHandshake', group: 'Accueil' },
   { href: '/dashboard/faq', label: 'FAQ', icon: 'FaQuestionCircle', group: 'Chatbot' },
   { href: '/dashboard/chatbot', label: 'Configuration', icon: 'FaRobot', group: 'Chatbot' },
   { href: '/dashboard/media', label: 'Médias', icon: 'FaImages', group: 'Outils' },
@@ -71,7 +71,7 @@ function SidebarContent({ user, onNavigate }: SidebarContentProps) {
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className="border-b border-sidebar-border p-4">
         { }
-        <img src="/dtk-logo.svg" alt="DTK Corporation" className="h-8 w-auto brightness-0 invert" />
+        <img src="/dtk-logo.png" alt="DTK Corporation" className="h-8 w-auto brightness-0 invert" />
       </div>
 
       <div className="border-b border-sidebar-border p-4">

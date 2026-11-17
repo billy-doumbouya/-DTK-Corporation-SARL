@@ -39,7 +39,7 @@ export async function SiteFooter({ settings }: { settings: FooterSettings | null
           {/* Brand */}
           <div className="space-y-3">
             { }
-            <img src="/dtk-logo.svg" alt="DTK Corporation SARL" className="h-10 w-auto brightness-0 invert" />
+            <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-10 w-auto brightness-0 invert" />
             <p className="text-sm text-primary-foreground/80">{settings?.slogan}</p>
             <p className="text-xs text-primary-foreground/60">
               {settings?.legalName || 'DTK Corporation SARL'}
@@ -55,7 +55,7 @@ export async function SiteFooter({ settings }: { settings: FooterSettings | null
             <ul className="space-y-2 text-sm">
               <li><Link href="/" className="text-primary-foreground/70 hover:text-accent transition-colors">Accueil</Link></li>
               <li><Link href="/a-propos" className="text-primary-foreground/70 hover:text-accent transition-colors">À propos</Link></li>
-              <li><Link href="/sous-traitance" className="text-primary-foreground/70 hover:text-accent transition-colors">Sous-traitance</Link></li>
+              <li><Link href="/sous-traitance" className="text-primary-foreground/70 hover:text-accent transition-colors">Sous-traitance générale</Link></li>
               <li><Link href="/produits" className="text-primary-foreground/70 hover:text-accent transition-colors">Produits</Link></li>
               <li><Link href="/realisations" className="text-primary-foreground/70 hover:text-accent transition-colors">Réalisations</Link></li>
               <li><Link href="/actualites" className="text-primary-foreground/70 hover:text-accent transition-colors">Actualités</Link></li>

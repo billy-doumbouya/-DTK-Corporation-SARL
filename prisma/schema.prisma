@@ -278,7 +278,7 @@ model Engagement {
 
 model SubcontractingPage {
   id            String   @id @default(cuid())
-  headline      String   @default("Sous-traitance")
+  headline      String   @default("Sous-traitance générale")
   intro         String
   domains       String   @default("") // JSON array of domains
   imageUrl      String?

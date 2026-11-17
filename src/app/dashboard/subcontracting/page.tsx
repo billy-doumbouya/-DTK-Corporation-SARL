@@ -2,7 +2,7 @@ import { PageHeader } from '@/components/dashboard/page-header'
 import { SubcontractingForm } from '@/components/dashboard/subcontracting-form'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Sous-traitance' }
+export const metadata: Metadata = { title: 'Sous-traitance générale' }
 export const dynamic = 'force-dynamic'
 
 export default function SubcontractingAdminPage() {

@@ -51,8 +51,11 @@ export default async function RealisationsPage({
   return (
     <>
       <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
-        <div className="bg-ellipse-dtk" aria-hidden="true" />
-        <div className="container relative mx-auto px-4 md:px-6">
+        <div className="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 to-[#101B91]/80" />
+        </div>
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="max-w-3xl">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-accent">Portfolio</p>
             <h1 className="text-3xl font-extrabold md:text-5xl">Nos réalisations</h1>

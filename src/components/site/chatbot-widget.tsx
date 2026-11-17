@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { AssistantAvatar } from '@/components/site/assistant-avatar'
 import { cn } from '@/lib/utils'
 
 interface Message {
@@ -21,9 +21,31 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const welcome = settings?.chatbotWelcome || 'Bonjour, comment puis-je vous aider ?'
+
+  // First-visit tooltip — shows after 3s if user hasn't seen it (localStorage)
+  useEffect(() => {
+    const seen = typeof window !== 'undefined' && localStorage.getItem('dtk_chatbot_tooltip_seen')
+    if (!seen) {
+      const timer = setTimeout(() => setShowTooltip(true), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  function dismissTooltip() {
+    setShowTooltip(false)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dtk_chatbot_tooltip_seen', '1')
+    }
+  }
+
+  function openChat() {
+    setOpen(true)
+    dismissTooltip()
+  }
 
   useEffect(() => {
     if (open && messages.length === 0) {
@@ -64,18 +86,38 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
 
   return (
     <>
-      {/* Floating button */}
-      <button
-        onClick={() => setOpen(!open)}
-        aria-label={open ? 'Fermer l’assistant' : 'Ouvrir l’assistant virtuel'}
-        className={cn(
-          'fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all',
-          'bg-primary text-primary-foreground hover:bg-accent hover:scale-105',
-          open && 'bg-accent'
+      {/* Floating button + tooltip */}
+      <div className="fixed bottom-5 right-5 z-50">
+        {showTooltip && !open && (
+          <div className="absolute bottom-0 right-16 w-64 animate-fade-in-up rounded-2xl border border-border bg-card p-4 shadow-2xl">
+            <div className="absolute bottom-3 -right-2 h-4 w-4 rotate-45 border-b border-r border-border bg-card" />
+            <div className="relative">
+              <button onClick={dismissTooltip} className="absolute -top-1 -right-1 text-muted-foreground hover:text-foreground" aria-label="Fermer">
+                <Icon name="FaTimes" size={12} />
+              </button>
+              <p className="text-sm font-semibold">Besoin d’aide ?</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Notre assistante virtuelle est là pour répondre à vos questions sur nos services et activités.
+              </p>
+              <button onClick={openChat} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline">
+                Discuter maintenant
+                <Icon name="FaArrowRight" size={10} />
+              </button>
+            </div>
+          </div>
         )}
-      >
-        <Icon name={open ? 'FaTimes' : 'FaRobot'} size={22} />
-      </button>
+        <button
+          onClick={() => { if (open) setOpen(false); else openChat() }}
+          aria-label={open ? 'Fermer l’assistant' : 'Ouvrir l’assistant virtuel'}
+          className={cn(
+            'flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all',
+            'bg-primary text-primary-foreground hover:scale-105',
+            open && 'bg-accent'
+          )}
+        >
+          {open ? <Icon name="FaTimes" size={22} /> : <AssistantAvatar size={52} />}
+        </button>
+      </div>
 
       {/* Panel */}
       {open && (
@@ -85,11 +127,14 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
           className="fixed bottom-24 right-5 z-50 flex h-[520px] max-h-[80vh] w-[calc(100vw-2.5rem)] max-w-sm flex-col rounded-xl border border-border bg-card shadow-2xl"
         >
           {/* Header */}
-          <div className="flex items-center gap-2 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
-            <Icon name="FaRobot" size={18} />
+          <div className="flex items-center gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
+            <AssistantAvatar size={36} />
             <div className="flex-1">
-              <p className="text-sm font-semibold">Assistant DTK</p>
-              <p className="text-xs text-primary-foreground/70">En ligne</p>
+              <p className="text-sm font-semibold">Aïcha — Assistante DTK</p>
+              <p className="flex items-center gap-1 text-xs text-primary-foreground/70">
+                <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                En ligne
+              </p>
             </div>
             <button onClick={() => setOpen(false)} aria-label="Fermer" className="hover:text-accent">
               <Icon name="FaTimes" size={16} />

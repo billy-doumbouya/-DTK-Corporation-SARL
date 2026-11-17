@@ -60,7 +60,7 @@ export default function AuthLoginPage() {
         <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
           <div className="mb-6 text-center">
             { }
-            <img src="/dtk-logo.svg" alt="DTK Corporation SARL" className="mx-auto h-12 w-auto" />
+            <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="mx-auto h-12 w-auto" />
             <h1 className="mt-4 text-2xl font-bold">Espace administration</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Connectez-vous pour gérer le contenu du site.

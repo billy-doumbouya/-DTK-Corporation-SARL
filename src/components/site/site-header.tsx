@@ -53,8 +53,6 @@ export function SiteHeader({
 }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
-  const wa = whatsappLink(settings?.whatsapp)
-
   const coreServices = services.filter((s) => !s.isSubcontracting)
 
   const isActive = (href: string) =>
@@ -66,7 +64,7 @@ export function SiteHeader({
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2" aria-label="DTK Corporation — Accueil">
           { }
-          <img src="/dtk-logo.svg" alt="DTK Corporation SARL" className="h-9 w-auto" />
+          <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-9 w-auto" />
         </Link>
 
         {/* Desktop nav */}
@@ -115,14 +113,6 @@ export function SiteHeader({
         {/* Right actions */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          {wa && (
-            <Button asChild size="sm" className="hidden md:inline-flex bg-[#25D366] hover:bg-[#1da851] text-white">
-              <a href={wa} target="_blank" rel="noopener noreferrer">
-                <Icon name="FaWhatsapp" size={16} className="mr-1" />
-                WhatsApp
-              </a>
-            </Button>
-          )}
           {/* Mobile menu */}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -134,7 +124,7 @@ export function SiteHeader({
               <SheetHeader>
                 <SheetTitle className="text-left">
                   { }
-                  <img src="/dtk-logo.svg" alt="DTK Corporation SARL" className="h-8 w-auto" />
+                  <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-8 w-auto" />
                 </SheetTitle>
               </SheetHeader>
               <nav className="mt-4 flex flex-col gap-1" aria-label="Navigation mobile">
@@ -173,16 +163,9 @@ export function SiteHeader({
                   className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10"
                 >
                   <Icon name="FaHandshake" size={16} />
-                  Sous-traitance
+                  Sous-traitance générale
                 </Link>
-                {wa && (
-                  <Button asChild className="mt-4 bg-[#25D366] hover:bg-[#1da851] text-white">
-                    <a href={wa} target="_blank" rel="noopener noreferrer">
-                      <Icon name="FaWhatsapp" size={16} className="mr-2" />
-                      Contacter sur WhatsApp
-                    </a>
-                  </Button>
-                )}
+
               </nav>
             </SheetContent>
           </Sheet>

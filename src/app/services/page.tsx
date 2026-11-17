@@ -29,12 +29,9 @@ export default async function ServicesPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <div className="absolute -top-20 -right-20 h-[30rem] w-[30rem] rounded-full bg-[#08A9E8] opacity-[0.20] blur-[120px]" />
-          <div className="absolute -bottom-32 -left-20 h-[26rem] w-[26rem] rounded-full bg-white opacity-[0.08] blur-[110px]" />
-          <svg className="absolute top-1/2 left-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-[0.06]" viewBox="0 0 200 200">
-            <ellipse cx="100" cy="100" rx="90" ry="72" fill="none" stroke="#FFFFFF" strokeWidth="0.6" />
-            <ellipse cx="100" cy="100" rx="70" ry="55" fill="none" stroke="#08A9E8" strokeWidth="0.8" />
-          </svg>
+          <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 via-[#101B91]/85 to-[#08A9E8]/60" />
+          <div className="absolute -top-20 -right-20 h-[30rem] w-[30rem] rounded-full bg-[#08A9E8] opacity-[0.15] blur-[120px]" />
         </div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <Reveal direction="up" className="max-w-3xl">

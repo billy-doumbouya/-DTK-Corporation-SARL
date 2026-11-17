@@ -15,7 +15,7 @@ const TYPE_LABELS: Record<string, string> = {
   devis: 'Demande de devis',
   contact: 'Contact',
   formation: 'Inscription à une formation',
-  'sous-traitance': 'Sous-traitance',
+  'sous-traitance': 'Sous-traitance générale',
   renseignements: 'Renseignements',
 }
 

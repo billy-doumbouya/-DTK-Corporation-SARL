@@ -49,6 +49,10 @@ export default async function AboutPage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
+        <div className="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 via-[#101B91]/80 to-[#08A9E8]/60" />
+        </div>
         <HeroDecor />
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <Reveal direction="up" className="max-w-3xl">
@@ -117,7 +121,7 @@ export default async function AboutPage() {
                   { icon: 'FaGraduationCap', label: 'Formation' },
                   { icon: 'FaPaw', label: 'Élevage' },
                   { icon: 'FaSnowflake', label: 'Froid' },
-                  { icon: 'FaHandshake', label: 'Sous-traitance' },
+                  { icon: 'FaHandshake', label: 'Sous-traitance générale' },
                 ].map((d) => (
                   <div key={d.label} className="rounded-xl border border-border bg-card p-5 text-center shadow-sm">
                     <Icon name={d.icon} size={28} className="mx-auto text-accent" />

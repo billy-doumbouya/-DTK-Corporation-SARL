@@ -25,8 +25,11 @@ export default async function ProductsPage() {
   return (
     <>
       <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
-        <div className="bg-ellipse-dtk" aria-hidden="true" />
-        <div className="container relative mx-auto px-4 md:px-6">
+        <div className="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=1920&q=60" alt="" className="h-full w-full object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/95 to-[#101B91]/80" />
+        </div>
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="max-w-3xl">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-accent">
               Catalogue
@@ -52,9 +55,10 @@ export default async function ProductsPage() {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((p) => (
-                <div
+                <Link
                   key={p.id}
-                  className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                  href={`/produits/${p.slug}`}
+                  className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-accent/40"
                 >
                   <div className="relative h-48 overflow-hidden">
                     {p.imageUrl ? (
@@ -69,15 +73,21 @@ export default async function ProductsPage() {
                         {p.service.shortTitle || p.service.title}
                       </span>
                     )}
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-primary/0 opacity-0 transition-all group-hover:bg-primary/30 group-hover:opacity-100">
+                      <span className="rounded-lg bg-background px-3 py-1.5 text-sm font-medium">
+                        Voir le produit
+                      </span>
+                    </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold">{p.name}</h3>
+                    <h3 className="font-bold group-hover:text-accent transition-colors">{p.name}</h3>
                     <p className="mt-1 text-sm text-muted-foreground line-clamp-3">{p.excerpt}</p>
                     {p.unit && (
                       <p className="mt-2 text-xs text-muted-foreground">Conditionnement : {p.unit}</p>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
