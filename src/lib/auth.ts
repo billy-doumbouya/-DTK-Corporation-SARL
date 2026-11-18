@@ -155,7 +155,7 @@ export async function authenticate(email: string, password: string, ip?: string)
   const valid = await verifyPassword(password, user.passwordHash)
   if (!valid) {
     const attempts = user.failedAttempts + 1
-    const lockFor = attempts >= 5 ? 15 * 60 * 1000 : 0 // 15 min lock after 5 attempts
+    const lockFor = attempts >= 10 ? 5 * 60 * 1000 : 0 // 5 min lock after 10 attempts (increased threshold)
     await db.user.update({
       where: { id: user.id },
       data: {
