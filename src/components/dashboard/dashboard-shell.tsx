@@ -28,6 +28,8 @@ const NAV: NavItem[] = [
   { href: '/dashboard/engagements', label: 'Engagements', icon: 'FaShieldAlt', group: 'Accueil' },
   { href: '/dashboard/stats', label: 'Chiffres', icon: 'FaChartLine', group: 'Accueil' },
   { href: '/dashboard/subcontracting', label: 'Sous-traitance générale', icon: 'FaHandshake', group: 'Accueil' },
+  { href: '/dashboard/credentials', label: 'Crédentials', icon: 'FaShieldAlt', group: 'Accueil' },
+  { href: '/dashboard/references', label: 'Références', icon: 'FaFileAlt', group: 'Accueil' },
   { href: '/dashboard/faq', label: 'FAQ', icon: 'FaQuestionCircle', group: 'Chatbot' },
   { href: '/dashboard/chatbot', label: 'Configuration', icon: 'FaRobot', group: 'Chatbot' },
   { href: '/dashboard/media', label: 'Médias', icon: 'FaImages', group: 'Outils' },

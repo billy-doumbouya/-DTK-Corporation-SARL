@@ -81,6 +81,26 @@ export function SubcontractingForm() {
           </div>
         </div>
       </div>
+
+      {/* Institutional fields */}
+      <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
+        <h3 className="font-bold flex items-center gap-2">
+          <Icon name="FaShieldAlt" size={16} className="text-accent" />
+          Informations institutionnelles
+        </h3>
+        <div className="space-y-1.5">
+          <Label htmlFor="capacity">Capacité opérationnelle</Label>
+          <Textarea id="capacity" value={data.capacity || ''} onChange={(e) => set('capacity', e.target.value)} rows={3} placeholder="Effectif, matériel, capacité d'intervention..." />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="insuranceInfo">Assurances professionnelles</Label>
+          <Textarea id="insuranceInfo" value={data.insuranceInfo || ''} onChange={(e) => set('insuranceInfo', e.target.value)} rows={3} placeholder="RC Professionnelle, couverture..." />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="legalFramework">Cadre juridique</Label>
+          <Textarea id="legalFramework" value={data.legalFramework || ''} onChange={(e) => set('legalFramework', e.target.value)} rows={3} placeholder="Types de contrats, conditions générales..." />
+        </div>
+      </div>
       <div className="flex justify-end">
         <Button type="submit" disabled={saving}>
           {saving ? <Icon name="FaCircleNotch" size={14} className="mr-2 animate-spin" /> : <Icon name="FaSave" size={14} className="mr-2" />}

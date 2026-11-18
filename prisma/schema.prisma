@@ -283,7 +283,48 @@ model SubcontractingPage {
   domains       String   @default("") // JSON array of domains
   imageUrl      String?
   imageAlt      String?
+  // Capacité institutionnelle
+  capacity      String   @default("") // texte libre: effectif, matériel, etc.
+  insuranceInfo String   @default("") // assurances professionnelles
+  legalFramework String  @default("") // cadre juridique / type de contrats
   updatedAt     DateTime @updatedAt
+}
+
+// ─── Subcontracting credentials (certifications, assurances, conformité) ────
+
+model SubcontractingCredential {
+  id          String   @id @default(cuid())
+  label       String   // "Assurance RC Professionnelle", "Capital social"
+  value       String   // "Policy N° XXX", "50 000 000 GNF"
+  iconKey     String   @default("FaShieldAlt")
+  category    String   @default("legal") // legal, insurance, financial, certification
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+// ─── Subcontracting references (past missions / client references) ──────────
+
+model SubcontractingReference {
+  id           String   @id @default(cuid())
+  clientName   String   // "Donneur d'ordre confidentiel" ou nom réel
+  missionType  String   // "Forfait", "Régie", "Mixed"
+  domain       String   // "BTP", "Agro-alimentaire", "Froid"...
+  scope        String   @default("") // description courte de la mission
+  duration     String   @default("") // "6 mois", "En cours"
+  location     String   @default("")
+  status       String   @default("delivered") // delivered, ongoing
+  testimonial  String?  // témoignage client (optionnel)
+  isPublished  Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([order])
+  @@index([domain])
 }
 
 // ─── Chatbot: FAQ, Knowledge, Model config ────────────────────────────────────

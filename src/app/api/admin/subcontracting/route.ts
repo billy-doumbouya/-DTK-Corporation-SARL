@@ -29,6 +29,10 @@ export async function PATCH(request: NextRequest) {
     for (const k of ['headline','intro','imageUrl','imageAlt']) {
       if (body[k] !== undefined) data[k] = body[k] === null ? null : String(body[k])
     }
+    // New institutional fields
+    for (const k of ['capacity', 'insuranceInfo', 'legalFramework']) {
+      if (body[k] !== undefined) data[k] = String(body[k])
+    }
     if (body.domains !== undefined) {
       data.domains = stringifyArray(
         Array.isArray(body.domains)
