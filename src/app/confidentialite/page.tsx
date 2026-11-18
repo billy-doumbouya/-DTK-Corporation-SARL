@@ -57,7 +57,7 @@ export default async function PrivacyPage() {
   return (
     <div className="bg-mesh-dtk">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
+      <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
           <img
             src="/images/abstract-waves.webp"

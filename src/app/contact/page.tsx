@@ -48,29 +48,14 @@ export default async function ContactPage() {
 
   return (
     <div className="bg-mesh-dtk">
-      {/* ─── Hero with background image ─── */}
+      {/* ─── Hero with background image (text is already in the image) ─── */}
       <section className="relative flex h-[50vh] min-h-[380px] items-center overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="/images/contact-service.webp"
-            alt=""
+            alt="Contact — Parlons de votre projet"
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 via-[#101B91]/15 to-[#08A9E8]/20" />
-          <HeroDecor />
-        </div>
-        <div className="container relative z-10 mx-auto px-4 md:px-6">
-          <Reveal direction="up" className="max-w-3xl text-primary-foreground">
-            <p className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
-              <span className="h-px w-8 bg-accent/60" />
-              Contact
-            </p>
-            <h1 className="text-4xl font-extrabold md:text-6xl">Parlons de votre projet</h1>
-            <p className="mt-4 text-lg text-primary-foreground/90 md:text-xl">
-              Un seul formulaire pour tous vos besoins : devis, inscription, sous-traitance,
-              renseignements. Notre équipe vous répond rapidement.
-            </p>
-          </Reveal>
         </div>
       </section>
 

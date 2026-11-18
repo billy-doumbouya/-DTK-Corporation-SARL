@@ -109,8 +109,8 @@ export default async function RootLayout({
             <ConditionalChrome>
               <SocialSidebar settings={settings as any} />
             </ConditionalChrome>
-            {/* Main content fills available space */}
-            <main className="flex-1 flex flex-col">{children}</main>
+            {/* Main content fills available space — mt-6 for spacing below navbar */}
+            <main className="flex-1 flex flex-col mt-6">{children}</main>
             {/* Footer + floating widgets (hidden on dashboard/auth) */}
             <ConditionalChrome>
               {settings?.chatbotEnabled !== false && (

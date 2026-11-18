@@ -55,7 +55,7 @@ export default function AuthLoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-end overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center md:justify-end overflow-hidden">
       {/* Login template as full background */}
       <div className="absolute inset-0">
         <img
@@ -67,7 +67,7 @@ export default function AuthLoginPage() {
       </div>
 
       {/* Form panel — fills the white box area on the right of the template */}
-      <div className="relative z-10 flex h-screen w-full max-w-xl items-center justify-center px-6 py-8 md:mr-8 lg:mr-16 xl:mr-24">
+      <div className="relative z-10 flex min-h-screen w-full max-w-xl items-center justify-center px-6 py-12 md:mr-8 lg:mr-16 xl:mr-24">
         <div className="flex w-full flex-col justify-center">
           {/* Header */}
           <div className="mb-8 text-center">

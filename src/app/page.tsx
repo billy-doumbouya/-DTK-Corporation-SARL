@@ -44,40 +44,66 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ─── Intro ─── */}
+      {/* ─── Intro — premium two-column with stats ─── */}
       <section className="relative overflow-hidden section-padding">
         <RichBackground />
         <div className="container relative z-10 mx-auto px-4 md:px-6">
-          <Reveal direction="up" className="mx-auto max-w-3xl text-center">
-            <p className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
-              <span className="h-px w-8 bg-accent/40" />
-              {settings?.siteName || 'DTK Corporation SARL'}
-              <span className="h-px w-8 bg-accent/40" />
-            </p>
-            <h2 className="text-2xl font-bold leading-tight md:text-4xl">
-              Une entreprise guinéenne pluridisciplinaire,{' '}
-              <span className="text-gradient-dtk">engagée sur ses valeurs</span>
-            </h2>
-            <p className="mt-4 text-muted-foreground md:text-lg">
-              DTK Corporation SARL intervient dans six domaines complémentaires — BTP,
-              agro-alimentaire, formation, élevage, froid et sous-traitance — au service
-              du développement de la Guinée.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg">
-                <Link href="/a-propos">
-                  <Icon name="FaUsers" size={16} className="mr-2" />
-                  En savoir plus
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/contact">
-                  <Icon name="FaPaperPlane" size={16} className="mr-2" />
-                  Faire une demande
-                </Link>
-              </Button>
-            </div>
-          </Reveal>
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            {/* Left: text */}
+            <Reveal direction="right">
+              <p className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
+                <span className="h-px w-8 bg-accent/60" />
+                {settings?.siteName || 'DTK Corporation SARL'}
+              </p>
+              <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
+                Une entreprise guinéenne{' '}
+                <span className="text-gradient-dtk">pluridisciplinaire</span>, engagée sur ses valeurs
+              </h2>
+              <p className="mt-5 text-muted-foreground md:text-lg leading-relaxed">
+                DTK Corporation SARL intervient dans six domaines complémentaires — BTP,
+                agro-alimentaire, formation, élevage, froid et sous-traitance — au service
+                du développement de la Guinée.
+              </p>
+              {/* Slogan badge */}
+              <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
+                <Icon name="FaAward" size={14} />
+                Professionnalisme · Qualité · Satisfaction
+              </div>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Button asChild size="lg">
+                  <Link href="/a-propos">
+                    <Icon name="FaUsers" size={16} className="mr-2" />
+                    En savoir plus
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link href="/contact">
+                    <Icon name="FaPaperPlane" size={16} className="mr-2" />
+                    Faire une demande
+                  </Link>
+                </Button>
+              </div>
+            </Reveal>
+
+            {/* Right: stats grid */}
+            <Reveal direction="left" delay={0.15}>
+              <div className="grid grid-cols-2 gap-4">
+                <StatBox icon="FaBuilding" value="6" label="Domaines d'expertise" />
+                <StatBox icon="FaMapMarkerAlt" value="4" label="Villes d'intervention" />
+                <StatBox icon="FaUsers" value="3" label="Mois de formation" />
+                <StatBox icon="FaShieldAlt" value="0" label="Compromis qualité" />
+              </div>
+              {/* Zones badges */}
+              <div className="mt-6 flex flex-wrap gap-2">
+                {['Conakry', 'Kankan', 'Siguiri', 'Dinguiraye'].map((z) => (
+                  <span key={z} className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium shadow-sm">
+                    <Icon name="FaMapMarkerAlt" size={10} className="text-accent" />
+                    {z}
+                  </span>
+                ))}
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -301,5 +327,20 @@ export default async function HomePage() {
         <WaveDivider color="var(--background)" />
       </section>
     </>
+  )
+}
+
+function StatBox({ icon, value, label }: { icon: string; value: string; label: string }) {
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
+      <div className="absolute -top-6 -right-6 h-16 w-16 rounded-full bg-accent/8 blur-2xl opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="relative z-10">
+        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 text-accent transition-transform group-hover:scale-110">
+          <Icon name={icon} size={18} />
+        </div>
+        <p className="text-3xl font-extrabold text-gradient-dtk">{value}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{label}</p>
+      </div>
+    </div>
   )
 }

@@ -158,7 +158,7 @@ export default async function SubcontractingPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="relative overflow-hidden bg-primary py-16 text-primary-foreground md:py-20">
+      <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <HeroDecor />
         <div className="container relative z-10 mx-auto px-4 text-center md:px-6">
           <Reveal direction="scale">
