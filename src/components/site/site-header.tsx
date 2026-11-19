@@ -139,7 +139,7 @@ export function SiteHeader({
           {/* Left: Logo + tagline */}
           <Link href="/" className="flex items-center gap-3" aria-label="DTK Corporation — Accueil">
             <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-12 w-auto md:h-14" />
-            <div className="hidden lg:block xl:border-l xl:border-accent/30 xl:pl-3">
+            <div className="hidden xl:block xl:border-l xl:border-accent/30 xl:pl-3">
               <p className="text-xs font-semibold leading-tight text-primary">
                 Professionnalisme
               </p>
@@ -150,7 +150,7 @@ export function SiteHeader({
           </Link>
 
           {/* Center: Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Navigation principale">
+          <nav className="hidden xl:flex items-center gap-1" aria-label="Navigation principale">
             {NAV_ITEMS.map((item) => {
               if (item.hasDropdown && item.href === '/services') {
                 return (
@@ -217,7 +217,7 @@ export function SiteHeader({
             {/* Mobile menu */}
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menu">
+                <Button variant="ghost" size="icon" className="xl:hidden" aria-label="Menu">
                   <Icon name="FaBars" size={22} />
                 </Button>
               </SheetTrigger>
@@ -227,7 +227,7 @@ export function SiteHeader({
                     <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-10 w-auto" />
                   </SheetTitle>
                 </SheetHeader>
-                <nav className="mt-4 flex flex-col gap-1" aria-label="Navigation mobile">
+                <nav className="mt-4 flex flex-col gap-1 overflow-y-auto scroll-thin max-h-[calc(100vh-80px)] pb-8" aria-label="Navigation mobile">
                   {NAV_ITEMS.map((item) => (
                     <Link
                       key={item.href}

@@ -1,13 +1,8 @@
-import type { Metadata } from "next";
-import { PageTransition } from "@/components/site/page-transition";
-
-export const metadata: Metadata = {
-  title: "DTK Corporation SARL",
-};
-
 /**
- * template.tsx re-renders on every navigation, enabling page transitions.
+ * template.tsx — disabled page transitions to prevent global-error crash.
+ * The AnimatePresence in PageTransition was causing hydration errors.
+ * Re-enable later by wrapping children with <PageTransition>.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
-  return <PageTransition>{children}</PageTransition>;
+  return <>{children}</>;
 }

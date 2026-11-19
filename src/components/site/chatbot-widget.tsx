@@ -7,6 +7,14 @@ import { Input } from '@/components/ui/input'
 import { AssistantAvatar } from '@/components/site/assistant-avatar'
 import { cn } from '@/lib/utils'
 
+const QUICK_QUESTIONS = [
+  'Quels sont vos services ?',
+  'Où intervenez-vous en Guinée ?',
+  'Comment demander un devis ?',
+  'Quelles formations proposez-vous ?',
+  'Comment vous contacter ?',
+]
+
 interface Message {
   role: 'user' | 'assistant'
   content: string
@@ -63,6 +71,11 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
     const text = input.trim()
     if (!text || loading) return
     setInput('')
+    await sendWithText(text)
+  }
+
+  async function sendWithText(text: string) {
+    if (!text.trim() || loading) return
     setMessages((prev) => [...prev, { role: 'user', content: text }])
     setLoading(true)
     try {
@@ -175,6 +188,24 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
               </div>
             )}
           </div>
+
+          {/* Quick questions — shown when chat just opened with welcome message */}
+          {messages.length <= 1 && !loading && (
+            <div className="border-t border-border p-3">
+              <p className="mb-2 text-xs font-medium text-muted-foreground">Questions fréquentes :</p>
+              <div className="flex flex-wrap gap-2">
+                {QUICK_QUESTIONS.map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => { setInput(q); setTimeout(() => sendWithText(q), 50) }}
+                    className="rounded-full border border-border bg-muted/50 px-3 py-1.5 text-xs font-medium transition-all hover:border-accent hover:bg-accent/10 hover:text-accent"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Input */}
           <div className="border-t border-border p-3">
