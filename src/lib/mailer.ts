@@ -44,7 +44,12 @@ class NodemailerMailer implements Mailer {
 
   private async getTransporter() {
     if (this.transporter) return this.transporter
-    const nodemailer = await import('nodemailer')
+    let nodemailer: any
+    try {
+      nodemailer = await import('nodemailer')
+    } catch {
+      throw new Error('nodemailer n\'est pas installé. Exécutez: bun add nodemailer')
+    }
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_SMTP_HOST || 'smtp.gmail.com',
       port: Number(process.env.MAIL_SMTP_PORT || 465),

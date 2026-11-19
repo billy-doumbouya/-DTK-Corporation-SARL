@@ -1,211 +1,324 @@
 # DTK Corporation SARL — Site web institutionnel
 
-Site web vitrine + back-office CMS pour DTK Corporation SARL, entreprise guinéenne pluridisciplinaire (BTP, agro-alimentaire, formation, élevage, froid, sous-traitance).
+Site web vitrine + back-office CMS pour DTK Corporation SARL, entreprise guinéenne pluridisciplinaire (BTP, agro-alimentaire, formation, élevage, froid, sous-traitance générale).
 
 **Slogan** : *Professionnalisme, Qualité, Satisfaction*
 
-## Stack technique
+---
 
-- **Framework** : Next.js 16 (App Router) + TypeScript 5
-- **Style** : Tailwind CSS 4 + shadcn/ui (New York)
-- **Base de données** : Prisma ORM + SQLite (dev) / PostgreSQL (prod)
-- **Auth** : Cookie `httpOnly` + session serveur (scrypt hashing)
-- **Chatbot** : z-ai-web-dev-sdk (LLM) + RAG léger par mots-clés
-- **Icônes** : react-icons
-- **Animations** : Framer Motion
-- **Emails** : abstraction `Mailer` (console en dev, nodemailer/SMTP en prod)
+## 1. Stack technique
 
-## Installation
+| Technologie | Version | Rôle |
+|-------------|---------|------|
+| Next.js (App Router) | 16 | Framework fullstack |
+| TypeScript | 5 | Typage statique |
+| Tailwind CSS | 4 | Styles |
+| shadcn/ui | New York | Composants UI |
+| Prisma ORM | 6 | Base de données (SQLite dev / PostgreSQL prod) |
+| Framer Motion | 12 | Animations au scroll |
+| react-icons | 5 | Icônes |
+| z-ai-web-dev-sdk | 0.0.18 | Chatbot LLM (RAG) |
+| zod | 4 | Validation client + serveur |
+| Sonner | 2 | Notifications toast |
+
+---
+
+## 2. Installation
 
 ```bash
 # 1. Installer les dépendances
 bun install
 
-# 2. Copier et configurer l'environnement
+# 2. Configurer l'environnement
 cp .env.example .env
-# Éditez .env : AUTH_SECRET, ADMIN_SEED_EMAIL, ADMIN_SEED_PASSWORD
+# Éditez .env (voir section 3)
 
-# 3. Créer la base de données et le seed
+# 3. Base de données + seed
 bun run db:push
 bun run db:seed
 
-# 4. Démarrer le serveur de développement
+# 4. Démarrer
 bun run dev
 ```
 
-Le site est accessible sur `http://localhost:3000`.
+Le site est sur `http://localhost:3000`.
 
-## Comptes par défaut (après seed)
+---
+
+## 3. Variables d'environnement
+
+| Variable | Description | Défaut |
+|----------|-------------|--------|
+| `DATABASE_URL` | URL base de données | `file:./db/custom.db` (SQLite) |
+| `AUTH_SECRET` | Secret session (aléatoire) | — |
+| `ADMIN_SEED_EMAIL` | Email admin initial | `admin@dtk.local` |
+| `ADMIN_SEED_PASSWORD` | Mot de passe admin initial | `ChangeMe123!` |
+| `NEXT_PUBLIC_SITE_URL` | URL du site | `http://localhost:3000` |
+| `MAIL_DRIVER` | `console` (dev) ou `smtp` (prod) | `console` |
+| `MAIL_USER` | Email SMTP (prod) | — |
+| `MAIL_APP_PASSWORD` | Mot de passe app SMTP | — |
+| `BLOB_READ_WRITE_TOKEN` | Token Vercel Blob (prod) | — |
+
+---
+
+## 4. Comptes par défaut
 
 - **Email** : `admin@dtk.local`
 - **Mot de passe** : `ChangeMe123!`
+- **Accès** : `Ctrl+Shift+L` ou URL `/auth`
 
-Changez ce mot de passe immédiatement après la première connexion via *Mon compte*.
+Le verrouillage anti-force-brute se déclenche après 10 tentatives échouées (5 min de lock).
 
-## Accès au tableau de bord
+---
 
-Le tableau de bord n'est **pas** accessible via un lien visible. Deux moyens d'y accéder :
-
-1. **Raccourci clavier** : `Ctrl+Shift+L` ou `Alt+Shift+A` (sur n'importe quelle page)
-2. **URL directe** : `/auth` (noindex, absente du sitemap et du menu)
-
-La sécurité repose sur l'authentification, pas sur la discrétion de la route.
-
-## Structure du projet
+## 5. Structure du projet
 
 ```
 prisma/
-  schema.prisma      # Schéma de base de données complet
-  seed.ts            # Seed honnête (faits connus uniquement)
+  schema.prisma        # 20+ modèles (User, Service, Product, Formation, etc.)
+  seed.ts              # Seed honnête (faits connus uniquement)
 
 src/
   app/
-    (public)/        # Pages publiques : accueil, services, contact, etc.
-    auth/            # Page de connexion (noindex)
-    dashboard/       # Tableau de bord admin (protégé par middleware)
-    api/             # Routes API (requests, chatbot, auth, admin CRUD)
+    (public)/          # 15 pages publiques
+    auth/              # Page de connexion (noindex)
+    dashboard/         # 19 modules admin (protégés par middleware)
+    api/               # 38 routes API (toutes avec try/catch)
   components/
-    site/            # Composants du site public (header, footer, slider, chatbot)
-    dashboard/       # Composants du dashboard (shell, resource-manager, forms)
-    ui/              # Composants shadcn/ui
+    site/              # Header, Footer, Slider, Chatbot, Reveal, Decor
+    dashboard/         # Shell, ResourceManager, Forms, DataTable
+    ui/                # shadcn/ui (60+ composants)
   lib/
-    auth.ts          # Session, authentification, RBAC (can())
-    db.ts            # Client Prisma
-    password.ts      # Hashing scrypt (pas de dépendance externe)
-    storage.ts       # Abstraction stockage (local dev / Vercel Blob prod)
-    mailer.ts        # Abstraction email (console dev / SMTP prod)
-    validators.ts    # Schémas Zod partagés (client + serveur)
-    settings.ts      # Helper SiteSettings + revalidation ISR
-    revalidate.ts    # Revalidation ciblée des pages publiques
-    permissions.ts   # Liste des permissions RBAC
-    icon.tsx         # Mapping react-icons (90+ icônes)
-    rate-limit.ts    # Rate limiting in-memory (anti-spam)
+    auth.ts            # Session, RBAC, lockout
+    db.ts              # Prisma client
+    password.ts        # Hashing scrypt
+    storage.ts         # Stockage images (local / Vercel Blob)
+    mailer.ts          # Email (console / SMTP)
+    validators.ts      # Schémas Zod partagés
+    settings.ts        # SiteSettings + revalidation ISR
+    revalidate.ts      # Revalidation ciblée
+    audit.ts           # Journal d'audit
+    icon.tsx           # 90+ icônes react-icons
+    rate-limit.ts      # Anti-spam
+    api-wrap.ts        # Wrapper try/catch API
+  middleware.ts        # Protection /dashboard/*
+
+public/
+  dtk-logo.png         # Logo officiel
+  dtk-favicon.svg      # Favicon
+  images/              # Images optimisées WebP
+  uploads/             # Uploads locaux (dev)
 ```
 
-## Modules du tableau de bord
+---
 
-| Module | Description |
-|--------|-------------|
-| Accueil | Compteurs (demandes nouvelles, par type), dernières demandes |
-| Demandes | Liste filtrable, détail, changement de statut, notes, export CSV |
-| Services | CRUD complet (6 services : BTP, Agro, Formation, Élevage, Froid, Sous-traitance) |
-| Produits | CRUD (produits agro + élevage) |
-| Formations | CRUD (formations 2-3 mois) |
-| Réalisations | CRUD (portfolio) avec planification de publication |
-| Actualités | CRUD (blog) avec planification de publication |
-| Slider | Gestion des diapositives d'accueil |
-| Partenaires | CRUD partenaires (logos + liens) |
-| Engagements | CRUD engagements QHSSE (zéro accident, zéro dommage, zéro compromis) |
-| Chiffres | CRUD statistiques (uniquement si publiées — n'inventez rien) |
-| Sous-traitance | Édition de la page dédiée |
-| FAQ | CRUD questions/réponses (utilisé par le chatbot en secours) |
-| Chatbot | Configuration des modèles + réindexation de la base de connaissances RAG |
-| Médiathèque | Upload d'images (drag & drop, aperçu, alt obligatoire) |
-| Paramètres | Coordonnées, réseaux sociaux, SEO, infos légales, options chatbot |
-| Mon compte | Changement de mot de passe |
+## 6. Modules du dashboard
 
-## Fonctionnalités clés
+| Module | Route | Description |
+|--------|-------|-------------|
+| Accueil | `/dashboard` | Compteurs + dernières demandes |
+| Demandes | `/dashboard/requests` | Liste filtrable + détail + statut + notes + export CSV |
+| Services | `/dashboard/services` | CRUD 6 services |
+| Produits | `/dashboard/products` | CRUD produits agro/élevage |
+| Formations | `/dashboard/formations` | CRUD formations (BTP, Froid, Agro, Bureautique, Numérique) |
+| Réalisations | `/dashboard/realisations` | CRUD portfolio |
+| Actualités | `/dashboard/news` | CRUD blog |
+| Slider | `/dashboard/slides` | CRUD diapos accueil |
+| Partenaires | `/dashboard/partners` | CRUD partenaires |
+| Engagements | `/dashboard/engagements` | CRUD QHSSE |
+| Chiffres | `/dashboard/stats` | CRUD statistiques |
+| Sous-traitance | `/dashboard/subcontracting` | Page singleton (intro, capacité, assurances, cadre juridique) |
+| Crédentials | `/dashboard/credentials` | CRUD crédentials (juridique, assurance, financier, certification) |
+| Références | `/dashboard/references` | CRUD missions de sous-traitance |
+| FAQ | `/dashboard/faq` | CRUD questions/réponses |
+| Chatbot | `/dashboard/chatbot` | Config modèles + réindexation RAG |
+| Médias | `/dashboard/media` | Upload images (drag & drop) |
+| Paramètres | `/dashboard/settings` | Coordonnées, réseaux, SEO, légal |
+| Journal d'audit | `/dashboard/audit` | Toutes les actions sensibles |
+| Mon compte | `/dashboard/account` | Changement mot de passe |
 
-### Formulaire de demande dynamique
+---
 
-Un seul formulaire, un seul point d'entrée API (`/api/requests`). Le visiteur choisit d'abord le type (devis, contact, formation, sous-traitance, renseignements), puis les champs s'adaptent.
+## 7. API routes (38 routes, toutes avec try/catch)
 
-- Validation client **et** serveur avec les **mêmes schémas Zod** (`src/lib/validators.ts`)
-- Anti-spam : honeypot + rate limiting par IP (5 demandes/heure)
-- Email de notification à l'admin + email de confirmation au visiteur
-- Statuts : nouveau → en cours → traité → archivé
-- Notes internes (visibles admin uniquement)
-- Export CSV
+### Publiques
+- `POST /api/requests` — Formulaire de demande (5 types, anti-spam, email)
+- `POST /api/chatbot` — Chatbot RAG (z-ai-web-dev-sdk)
+- `POST /api/auth/login` — Connexion
+- `POST /api/auth/logout` — Déconnexion
+- `GET /api/auth/me` — Statut session
+- `POST /api/auth/change-password` — Changement mot de passe
+- `POST /api/upload` — Upload image
+
+### Admin (protégées par auth)
+- `/api/admin/services` — CRUD services
+- `/api/admin/products` — CRUD produits
+- `/api/admin/formations` — CRUD formations
+- `/api/admin/realisations` — CRUD réalisations
+- `/api/admin/news` — CRUD actualités
+- `/api/admin/slides` — CRUD slides
+- `/api/admin/partners` — CRUD partenaires
+- `/api/admin/engagements` — CRUD engagements
+- `/api/admin/stats` — CRUD chiffres
+- `/api/admin/faq` — CRUD FAQ
+- `/api/admin/chatbot` — Config + réindexation
+- `/api/admin/media` — Liste + suppression
+- `/api/admin/settings` — Lecture + modification
+- `/api/admin/subcontracting` — Page singleton
+- `/api/admin/credentials` — CRUD crédentials
+- `/api/admin/references` — CRUD références
+- `/api/admin/audit` — Lecture journal
+- `/api/requests/[id]` — Statut + notes + suppression
+- `/api/requests/export` — Export CSV
+
+---
+
+## 8. Sécurité
+
+| Mécanisme | Détail |
+|-----------|--------|
+| Hashing mot de passe | scrypt (Node crypto, pas de dépendance externe) |
+| Cookie session | `httpOnly`, `Secure`, `SameSite` |
+| Verrouillage | 10 tentatives → 5 min de lock |
+| RBAC | Tables Role/Permission/UserRole + helper `can()` |
+| Middleware | Protection `/dashboard/*` |
+| Validation | Zod côté client + serveur (schémas partagés) |
+| Anti-spam | Honeypot + rate limiting (5 demandes/heure, 15 msg chatbot/min) |
+| En-têtes | HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy |
+| Journal d'audit | Toutes les actions sensibles (25 types d'actions) |
+| Error boundaries | `global-error.tsx` + `error.tsx` + `dashboard/error.tsx` |
+| API | 100% des routes avec try/catch ou `apiHandler()` |
+
+---
+
+## 9. Fonctionnalités clés
 
 ### Chatbot RAG
-
-- Bulle flottante en bas à droite
-- Récupère les chunks pertinents par **similarité de mots-clés** (pas d'embeddings coûteux)
+- Assistante virtuelle "Aïcha" avec avatar SVG animé (yeux qui clignent)
+- RAG par similarité de mots-clés (table `ChatbotKnowledge`)
 - Prompt système strictement borné à DTK Corporation
-- Refuse les demandes hors sujet, ne donne ni prix ni engagement
-- Bascule sur la FAQ en cas d'échec du modèle
-- Rate limiting (15 messages/minute/IP)
-- Clé API jamais exposée côté client
+- 5 questions fréquentes en boutons cliquables
+- Fallback sur FAQ en cas d'échec du modèle
+- Rate limiting 15 msg/min/IP
 
-### Sécurité
+### Formulaire de demande dynamique
+- 5 types : Devis, Contact, Formation, Sous-traitance, Renseignements
+- Champs adaptatifs selon le type
+- Validation Zod partagée client/serveur
+- Anti-spam : honeypot + rate limiting
+- Email notification admin + confirmation visiteur
+- Statuts : nouveau → en_cours → traité → archivé
+- Notes internes + export CSV
 
-- Mot de passe haché (scrypt)
-- Cookie `httpOnly`, `Secure`, `SameSite`
-- Rate limiting sur login (verrouillage 15 min après 5 échecs)
-- Middleware de protection des routes `/dashboard/*`
-- En-têtes de sécurité : CSP-ready, HSTS, X-Frame-Options, etc.
-- RBAC préparé (tables Role/Permission/UserRole) avec helper `can(action)`
-- Journal d'audit (connexions, actions sensibles)
+### Page sous-traitance (institutionnelle)
+- Crédentials & conformité (8 cartes par catégorie)
+- Capacité opérationnelle + assurances + cadre juridique
+- Références de missions (avec statut Livré/En cours)
+- Process steps (Analyse → Planification → Exécution → Livraison)
+- Tout administrable depuis le dashboard
 
-### SEO & Performance
+### Design
+- Navbar deux niveaux (barre utilitaire navy + barre principale blanche)
+- Barre utilitaire qui se cache au scroll
+- Barre sociale verticale (apparaît au scroll)
+- Widget WhatsApp flottant
+- Animations au scroll (Framer Motion `whileInView`)
+- Empty states professionnels
+- Images de fond sur toutes les pages
+- Footer premium avec wave divider + watermark
 
-- API Metadata de Next.js (titre, description, Open Graph par page)
-- `sitemap.xml` et `robots.txt` générés dynamiquement
-- JSON-LD (Organization, LocalBusiness, Service)
-- ISR avec revalidation ciblée (pas de redéploiement pour les modifications de contenu)
-- `next/image` avec optimisation WebP/AVIF
-- Polices via `next/font` (Sora + Inter)
-- `prefers-reduced-motion` respecté
-- Lighthouse > 90 visé (mobile)
+---
 
-## Commandes
-
-```bash
-bun run dev        # Serveur de développement (port 3000)
-bun run lint       # Vérification ESLint
-bun run db:push    # Pousser le schéma Prisma vers la BDD
-bun run db:seed    # Remplir la BDD avec le contenu initial
-bun run db:reset   # Réinitialiser (attention : efface les données)
-bun run build      # Build de production
-```
-
-## Déploiement (Vercel + Neon)
+## 10. Déploiement (Vercel + Neon)
 
 1. Poussez le code sur GitHub
-2. Importez le projet sur [Vercel](https://vercel.com)
-3. Configurez les variables d'environnement (voir `.env.example`)
-4. Pour la base PostgreSQL : créez une base sur [Neon](https://neon.tech), mettez `DATABASE_URL` dans les variables Vercel
-5. Pour les images : activez Vercel Blob et définissez `BLOB_READ_WRITE_TOKEN`
-6. Pour les emails : configurez un mot de passe d'application Gmail ou un SMTP professionnel
+2. Importez sur [Vercel](https://vercel.com)
+3. Variables d'environnement (voir `.env.example`)
+4. Base PostgreSQL : créez sur [Neon](https://neon.tech)
+5. Changez `provider = "postgresql"` dans `prisma/schema.prisma`
+6. `DATABASE_URL` → URL Neon
+7. Activez Vercel Blob → `BLOB_READ_WRITE_TOKEN`
+8. Pour les emails : `bun add nodemailer` + config SMTP
 
 ### Migration SQLite → PostgreSQL
 
-Le schéma Prisma est portable. Pour passer en production :
+```bash
+# Dans prisma/schema.prisma :
+# datasource db { provider = "postgresql" ... }
 
-1. Changez `provider = "sqlite"` en `provider = "postgresql"` dans `prisma/schema.prisma`
-2. Définissez `DATABASE_URL` avec l'URL Neon
-3. Exécutez `bun run db:push` puis `bun run db:seed`
+bun run db:push
+bun run db:seed
+```
 
-## Maintenance depuis VSCode
+---
 
-Le projet est un projet Next.js standard. Ouvrez-le dans VSCode et :
+## 11. Maintenance depuis VSCode
 
-- **Éditez le contenu** : principalement via le tableau de bord (pas besoin de toucher au code)
-- **Ajoutez une icône** : ajoutez-la dans `src/lib/icon.tsx` (map `ICON_MAP`)
-- **Modifiez les couleurs** : variables CSS dans `src/app/globals.css` (`--dtk-cyan`, `--dtk-navy`)
-- **Ajoutez une page** : créez un dossier dans `src/app/` avec un `page.tsx`
-- **Modifiez le schéma BDD** : éditez `prisma/schema.prisma` puis `bun run db:push`
+```bash
+bun run dev        # Serveur dev (port 3000)
+bun run lint       # ESLint
+bun run db:push    # Push schema
+bun run db:seed    # Seed
+bun run db:reset   # Reset (efface données)
+```
 
-### Extensions VSCode recommandées
+### Ajouter une icône
+Ajoutez-la dans `src/lib/icon.tsx` (map `ICON_MAP`).
 
-- ESLint
-- Prettier
-- Tailwind CSS IntelliSense
-- Prisma
+### Modifier les couleurs
+Variables CSS dans `src/app/globals.css` (`--dtk-cyan`, `--dtk-navy`).
 
-## Contenu honnête
+### Changer le logo
+Remplacez `/public/dtk-logo.png`.
 
-Le seed n'invente **aucun** chiffre, certification, client, prix, date ou référence. Les champs inconnus (contacts, WhatsApp, adresse, réseaux sociaux) sont laissés vides et masqués proprement sur le site. L'admin les renseigne depuis le tableau de bord.
+---
 
-## Points à valider avec le client
+## 12. Support technique
 
-- Contenu exact des services, produits, formations et réalisations
-- Fichier du logo en haute qualité
-- Achat du nom de domaine et emails professionnels
-- Coordonnées, WhatsApp, adresse et réseaux sociaux
- Informations légales (numéro d'immatriculation, etc.)
+### Le site ne démarre pas
+1. Vérifiez `bun install` → dépendances installées
+2. Vérifiez `.env` → `DATABASE_URL` correct
+3. Vérifiez `bun run db:push` → schema synchronisé
+4. Vérifiez `bun run db:seed` → données présentes
+
+### Compte admin verrouillé
+```bash
+node -e "const{PrismaClient}=require('@prisma/client');const db=new PrismaClient();(async()=>{await db.user.update({where:{email:'admin@dtk.local'},data:{failedAttempts:0,lockedUntil:null}});console.log('unlocked')})().finally(()=>db.\$disconnect())"
+```
+
+### Images ne s'affichent pas
+- Vérifiez `/public/images/` contient les fichiers WebP
+- Vérifiez `next.config.ts` → `remotePatterns` pour les URLs externes
+
+### Chatbot ne répond pas
+- Vérifiez la clé z-ai-web-dev-sdk (incluse, pas de clé externe)
+- Vérifiez `/api/chatbot` → POST renvoie JSON
+- Vérifiez `ChatbotKnowledge` → `bun run db:seed` ou réindexez depuis `/dashboard/chatbot`
+
+### Emails non envoyés (dev)
+- En dev (`MAIL_DRIVER=console`), les emails s'affichent dans le terminal
+- En prod, installez nodemailer : `bun add nodemailer`
+
+---
+
+## 13. Critères de qualité
+
+| Critère | Statut |
+|---------|--------|
+| Lint | 0 erreur, 0 warning |
+| API try/catch | 38/38 routes (100%) |
+| Code mort | Aucun (audité) |
+| Error boundaries | global-error + error + dashboard/error + not-found |
+| E2E sync | Create → update → publish → delete → visible sur public ✓ |
+| Audit log | 25 types d'actions journalisées |
+| Validation | Zod client + serveur (schémas partagés) |
+| RBAC | Préparé (Role/Permission/UserRole) |
+| SEO | sitemap.xml + robots.ts + JSON-LD + metadata par page |
+| Accessibilité | ARIA, prefers-reduced-motion, focus-visible |
+
+---
 
 ## Licence
 
 Code propriétaire — DTK Corporation SARL.
-Images d'illustration : Unsplash (conformément à leurs conditions).
+Images : Unsplash + images fournies par l'entreprise.

@@ -55,19 +55,18 @@ export default function AuthLoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center md:justify-end overflow-hidden">
-      {/* Login template as full background */}
-      <div className="absolute inset-0">
+    <div className="relative flex min-h-screen items-center justify-end overflow-y-auto">
+      {/* Login template as FIXED background (doesn't scroll) */}
+      <div className="fixed inset-0 z-0">
         <img
           src="/images/login-template.webp"
           alt=""
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/10" />
       </div>
 
-      {/* Form panel — fills the white box area on the right of the template */}
-      <div className="relative z-10 flex min-h-screen w-full max-w-xl items-center justify-center px-6 py-12 md:mr-8 lg:mr-16 xl:mr-24">
+      {/* Form panel — positioned in the white box area on the right */}
+      <div className="relative z-10 flex min-h-screen w-full max-w-lg items-center justify-center px-4 py-12 md:mr-4 lg:mr-8 xl:mr-12 2xl:mr-16">
         <div className="flex w-full flex-col justify-center">
           {/* Header */}
           <div className="mb-8 text-center">
@@ -80,8 +79,8 @@ export default function AuthLoginPage() {
             </p>
           </div>
 
-          {/* Form card — fills available space */}
-          <form onSubmit={onSubmit} className="flex flex-col gap-5 rounded-2xl border border-border/40 bg-white/60 p-8 shadow-lg backdrop-blur-sm md:bg-white/50 md:p-10" noValidate>
+          {/* Form card — transparent on desktop (blends with white panel), semi-opaque on mobile */}
+          <form onSubmit={onSubmit} className="flex flex-col gap-5 rounded-2xl bg-white/80 p-6 shadow-xl backdrop-blur-md md:bg-transparent md:shadow-none md:backdrop-blur-none md:p-8 lg:p-10" noValidate>
             {/* Email field with icon */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-semibold text-primary">

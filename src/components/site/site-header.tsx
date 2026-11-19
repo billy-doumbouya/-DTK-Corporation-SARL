@@ -138,19 +138,16 @@ export function SiteHeader({
         <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
           {/* Left: Logo + tagline */}
           <Link href="/" className="flex items-center gap-3" aria-label="DTK Corporation — Accueil">
-            <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-12 w-auto md:h-14" />
-            <div className="hidden xl:block xl:border-l xl:border-accent/30 xl:pl-3">
-              <p className="text-xs font-semibold leading-tight text-primary">
-                Professionnalisme
-              </p>
-              <p className="text-xs font-semibold leading-tight text-primary">
-                Qualité · Satisfaction
+            <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-10 w-auto md:h-12" />
+            <div className="hidden 2xl:block 2xl:border-l 2xl:border-accent/30 2xl:pl-3">
+              <p className="whitespace-nowrap text-xs font-semibold leading-tight text-primary">
+                Professionnalisme · Qualité · Satisfaction
               </p>
             </div>
           </Link>
 
           {/* Center: Desktop nav */}
-          <nav className="hidden xl:flex items-center gap-1" aria-label="Navigation principale">
+          <nav className="hidden xl:flex items-center gap-0.5" aria-label="Navigation principale">
             {NAV_ITEMS.map((item) => {
               if (item.hasDropdown && item.href === '/services') {
                 return (
@@ -158,7 +155,7 @@ export function SiteHeader({
                     <DropdownMenuTrigger asChild>
                       <button
                         className={cn(
-                          'inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium transition-all',
+                          'inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition-all',
                           isActive(item.href)
                             ? 'bg-accent text-accent-foreground shadow-sm'
                             : 'text-foreground hover:bg-accent/10 hover:text-accent'
