@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import {
@@ -63,7 +63,6 @@ export function SiteHeader({
   const pathname = usePathname()
   const router = useRouter()
   const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const logoClicks = useRef<{ count: number; at: number }>({ count: 0, at: 0 })
 
   function handleLogoClick(event: React.MouseEvent) {
@@ -79,14 +78,6 @@ export function SiteHeader({
     }
   }
 
-  // Hide top utility bar on scroll (smooth)
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   const coreServices = services.filter((s) => !s.isSubcontracting)
 
   const isActive = (href: string) =>
@@ -96,15 +87,9 @@ export function SiteHeader({
   const hasSocial = settings?.facebookUrl || settings?.linkedinUrl || settings?.instagramUrl
 
   return (
-    <header className="sticky top-0 z-40 w-full shadow-md">
-      {/* ─── Tier 1: Utility bar (navy) — hides on scroll ─── */}
+    <>
       {(hasContactInfo || hasSocial) && (
-        <div
-          className={cn(
-            'hidden bg-primary text-primary-foreground transition-all duration-300 ease-in-out lg:block overflow-hidden',
-            scrolled ? 'max-h-0 opacity-0' : 'max-h-12 opacity-100'
-          )}
-        >
+        <div className="hidden bg-primary text-primary-foreground lg:block">
           <div className="container mx-auto flex h-9 items-center justify-between gap-4 px-6 text-xs">
             {/* Left: contact info */}
             <div className="flex min-w-0 flex-1 items-center gap-4">
@@ -149,16 +134,24 @@ export function SiteHeader({
         </div>
       )}
 
-      {/* ─── Tier 2: Main nav (white) ─── */}
+      <header className="sticky top-0 z-40 w-full shadow-md">
       <div className="bg-background border-b border-border/60">
         <div className="container mx-auto flex h-20 items-center justify-between gap-3 px-4 md:gap-4 md:px-6">
           {/* Brand */}
           <Link href="/" onClick={handleLogoClick} className="flex shrink-0 items-center" aria-label="DTK Corporation — Accueil">
-            <Image src="/dtk-logo.png" alt="DTK Corporation SARL" width={600} height={295} sizes="100px" className="h-10 w-auto md:h-12" />
+            <Image src="/dtk-logo.png" alt="DTK Corporation SARL" width={600} height={295} sizes="100px" priority className="animate-dtk-logo-build h-10 w-auto md:h-12" />
           </Link>
 
           {/* Center: Desktop nav */}
-          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-0 xl:flex" aria-label="Navigation principale">
+          <nav
+            className="relative isolate hidden h-12 min-w-0 flex-1 items-center justify-center gap-0 xl:flex 2xl:h-14"
+            aria-label="Navigation principale"
+          >
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-accent via-primary to-primary"
+              style={{ clipPath: 'polygon(1.75rem 0, 100% 0, 100% 100%, 0 100%)' }}
+            />
             {NAV_ITEMS.map((item) => {
               if (item.hasDropdown && item.href === '/services') {
                 return (
@@ -166,10 +159,10 @@ export function SiteHeader({
                     <DropdownMenuTrigger asChild>
                       <button
                         className={cn(
-                          'inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium transition-all 2xl:px-2 2xl:text-sm',
+                          'relative z-10 inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium transition-all 2xl:px-2 2xl:text-sm',
                           isActive(item.href)
                             ? 'bg-accent text-accent-foreground shadow-sm'
-                            : 'text-foreground hover:bg-accent/10 hover:text-accent'
+                            : 'text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground'
                         )}
                       >
                         {item.label}
@@ -200,10 +193,10 @@ export function SiteHeader({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium transition-all 2xl:px-2 2xl:text-sm',
+                    'relative z-10 inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium transition-all 2xl:px-2 2xl:text-sm',
                     isActive(item.href)
                       ? 'bg-accent text-accent-foreground shadow-sm'
-                      : 'text-foreground hover:bg-accent/10 hover:text-accent'
+                      : 'text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground'
                   )}
                 >
                   {item.label}
@@ -317,6 +310,7 @@ export function SiteHeader({
           </div>
         </div>
       </div>
-    </header>
+      </header>
+    </>
   )
 }

@@ -80,10 +80,10 @@ export default async function ServiceDetailPage({ params }: PageProps) {
               <Icon name={service.iconKey || 'FaBuilding'} size={64} className="text-primary-foreground/40" />
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/40 via-[#101B91]/20 to-[#08A9E8]/15" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 via-[#101B91]/70 to-[#08A9E8]/70" />
         </div>
         <div className="relative z-10 flex min-h-[55vh] items-end pb-16">
-          <div className="container mx-auto px-4 md:px-6">
+          <div className="public-hero-copy container mx-auto px-4 md:px-6">
             {/* Breadcrumb */}
             <nav className="mb-4 flex items-center gap-2 text-sm text-white/70" aria-label="Fil d'Ariane">
               <Link href="/" className="hover:text-accent">Accueil</Link>

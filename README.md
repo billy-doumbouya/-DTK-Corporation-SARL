@@ -14,10 +14,10 @@ Site web vitrine + back-office CMS pour DTK Corporation SARL, entreprise guinée
 | TypeScript | 5 | Typage statique |
 | Tailwind CSS | 4 | Styles |
 | shadcn/ui | New York | Composants UI |
-| Prisma ORM | 6 | Base de données PostgreSQL (Neon) |
+| Prisma ORM | 6 | PostgreSQL (Neon en production) |
 | Framer Motion | 12 | Animations au scroll |
 | react-icons | 5 | Icônes |
-| z-ai-web-dev-sdk | 0.0.18 | Chatbot LLM (RAG) |
+| Google AI Studio | Gemini | Chatbot LLM (RAG) |
 | zod | 4 | Validation client + serveur |
 | Sonner | 2 | Notifications toast |
 
@@ -29,12 +29,12 @@ Site web vitrine + back-office CMS pour DTK Corporation SARL, entreprise guinée
 # 1. Installer les dépendances
 bun install
 
-# 2. Configurer l'environnement
+# 2. Configurer PostgreSQL et l'environnement
 copy .env.example .env
-# Remplacez DATABASE_URL par l'URL PostgreSQL de votre projet Neon (voir section 3)
+# Renseignez DATABASE_URL, ADMIN_SEED_EMAIL et ADMIN_SEED_PASSWORD
 
-# 3. Base de données + seed
-bun run db:push
+# 3. Appliquer le schéma et initialiser les données de développement
+bun run db:migrate
 bun run db:seed
 
 # 4. Démarrer
@@ -49,25 +49,27 @@ Le site est sur `http://localhost:3000`.
 
 | Variable | Description | Défaut |
 |----------|-------------|--------|
-| `DATABASE_URL` | URL PostgreSQL Neon, avec `sslmode=require` | Pas de valeur par défaut |
-| `AUTH_SECRET` | Secret session (aléatoire) | — |
-| `ADMIN_SEED_EMAIL` | Email admin initial | `admin@dtk.local` |
-| `ADMIN_SEED_PASSWORD` | Mot de passe admin initial | `ChangeMe123!` |
+| `DATABASE_URL` | URL PostgreSQL; URL poolée Neon pour l'application en production | — |
+| `ADMIN_SEED_EMAIL` | Email admin initial, requis au seed | — |
+| `ADMIN_SEED_PASSWORD` | Mot de passe admin initial, requis au seed | — |
 | `NEXT_PUBLIC_SITE_URL` | URL du site | `http://localhost:3000` |
 | `MAIL_DRIVER` | `console` (dev) ou `smtp` (prod) | `console` |
-| `MAIL_USER` | Email SMTP (prod) | — |
-| `MAIL_APP_PASSWORD` | Mot de passe app SMTP | — |
+| `MAIL_USER` / `MAIL_APP_PASSWORD` | Identifiants SMTP | — |
+| `MAIL_SMTP_HOST` / `MAIL_SMTP_PORT` | Serveur et port SMTP | `smtp.gmail.com` / `465` |
+| `ADMIN_NOTIFY_EMAIL` | Adresse qui reçoit les demandes | — |
 | `BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN` | Token Vercel Blob (prod) | — |
+| `GOOGLE_AI_API_KEY` | Clé serveur Google AI Studio | — |
+| `CHATBOT_MODELS` | Modèles Gemini de secours | — |
 
 ---
 
-## 4. Comptes par défaut
+## 4. Compte administrateur
 
-- **Email** : `admin@dtk.local`
-- **Mot de passe** : `ChangeMe123!`
-- **Accès** : `Ctrl+Shift+L` ou URL `/auth`
+Définissez `ADMIN_SEED_EMAIL` et un mot de passe unique avant le premier seed.
+Aucun mot de passe administrateur par défaut n'est créé ou affiché. L'accès se
+fait via `Ctrl+Shift+L` ou l'URL `/auth`.
 
-Le verrouillage anti-force-brute se déclenche après 10 tentatives échouées (5 min de lock).
+Le compte se verrouille après 10 tentatives échouées pendant 5 minutes.
 
 ---
 
@@ -101,7 +103,7 @@ src/
     icon.tsx           # 90+ icônes react-icons
     rate-limit.ts      # Anti-spam
     api-wrap.ts        # Wrapper try/catch API
-  middleware.ts        # Protection /dashboard/*
+  proxy.ts             # Protection /dashboard/* and same-origin mutations
 
 public/
   dtk-logo.png         # Logo officiel
@@ -143,7 +145,7 @@ public/
 
 ### Publiques
 - `POST /api/requests` — Formulaire de demande (5 types, anti-spam, email)
-- `POST /api/chatbot` — Chatbot RAG (z-ai-web-dev-sdk)
+- `POST /api/chatbot` — Chatbot RAG (Google AI Studio/Gemini)
 - `POST /api/auth/login` — Connexion
 - `POST /api/auth/logout` — Déconnexion
 - `GET /api/auth/me` — Statut session
@@ -196,10 +198,11 @@ public/
 ### Chatbot RAG
 - Assistante virtuelle "Aïcha" avec avatar SVG animé (yeux qui clignent)
 - RAG par similarité de mots-clés (table `ChatbotKnowledge`)
+- Appels Google AI Studio/Gemini côté serveur; configurer `GOOGLE_AI_API_KEY`
 - Prompt système strictement borné à DTK Corporation
 - 5 questions fréquentes en boutons cliquables
 - Fallback sur FAQ en cas d'échec du modèle
-- Rate limiting 15 msg/min/IP
+- Rate limiting 15 msg/min/IP (en mémoire; à remplacer par un stockage partagé avant un déploiement multi-instance)
 
 ### Formulaire de demande dynamique
 - 5 types : Devis, Contact, Formation, Sous-traitance, Renseignements
@@ -231,22 +234,25 @@ public/
 
 ## 10. Déploiement (Vercel + Neon)
 
+> `prisma/db/custom.db` contient l'ancienne base SQLite locale et reste suivie
+> par Git. Elle n'est pas migrée ni supprimée; ne publiez pas ses modifications.
+> La production démarre avec une base PostgreSQL neuve et le seed.
+
 1. Poussez le code sur GitHub
 2. Importez sur [Vercel](https://vercel.com)
 3. Variables d'environnement (voir `.env.example`)
 4. Créez un projet PostgreSQL sur [Neon](https://neon.tech)
-5. Copiez sa chaîne de connexion (de préférence l'URL poolée contenant `-pooler`) dans `DATABASE_URL`
-6. Vérifiez que l'URL inclut `sslmode=require`, puis poussez le schéma avec `bun run db:push`
-7. Initialisez les données avec `bun run db:seed`
+5. Configurez `DATABASE_URL` dans Vercel avec l'URL poolée Neon (`-pooler`) et `sslmode=require`
+6. Depuis un environnement sécurisé, appliquez les migrations avec une URL directe Neon : `bun run db:migrate:deploy`
+7. Initialisez la base neuve avec `bun run db:seed` après avoir défini les identifiants admin
 8. Activez Vercel Blob → `BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN`
 9. Configurez les variables SMTP pour les emails
 
 ### Initialisation PostgreSQL
 
-```bash
-bun run db:push
-bun run db:seed
-```
+Les migrations versionnées dans `prisma/migrations` sont la source de vérité.
+Utilisez `db:push` uniquement en développement; en production, appliquez les
+migrations avec `bun run db:migrate:deploy` et l'URL directe de la base.
 
 ---
 
@@ -255,9 +261,10 @@ bun run db:seed
 ```bash
 bun run dev        # Serveur dev (port 3000)
 bun run lint       # ESLint
-bun run db:push    # Push schema
+bun run db:migrate # Migration locale/dev
 bun run db:seed    # Seed
-bun run db:reset   # Reset (efface données)
+bun run db:migrate:deploy # Appliquer les migrations en production
+bun run db:reset   # Destructif : réservé au développement local
 ```
 
 ### Ajouter une icône
@@ -275,14 +282,15 @@ Remplacez `/public/dtk-logo.png`.
 
 ### Le site ne démarre pas
 1. Vérifiez `bun install` → dépendances installées
-2. Vérifiez que `DATABASE_URL` est l'URL actuelle fournie par Neon, sans publier ni partager ses identifiants
-3. Vérifiez que le projet et l'endpoint Neon sont actifs
-4. Testez l'accès réseau à l'hôte sur le port TCP 5432; si le test expire, vérifiez le pare-feu, le VPN ou les règles réseau de l'hébergeur
-5. Lorsque la connexion est rétablie, exécutez `bun run db:push` si le schéma n'est pas synchronisé, puis `bun run db:seed` si la base est vide
+2. Vérifiez que `DATABASE_URL` pointe vers un serveur PostgreSQL joignable
+3. En production, utilisez l'URL poolée pour l'application et l'URL directe pour appliquer les migrations
 
 ### Compte admin verrouillé
+
+Remplacez `VOTRE_EMAIL_ADMIN` par l'adresse définie dans `ADMIN_SEED_EMAIL`.
+
 ```bash
-node -e "const{PrismaClient}=require('@prisma/client');const db=new PrismaClient();(async()=>{await db.user.update({where:{email:'admin@dtk.local'},data:{failedAttempts:0,lockedUntil:null}});console.log('unlocked')})().finally(()=>db.\$disconnect())"
+node -e "const{PrismaClient}=require('@prisma/client');const db=new PrismaClient();(async()=>{await db.user.update({where:{email:'VOTRE_EMAIL_ADMIN'},data:{failedAttempts:0,lockedUntil:null}});console.log('unlocked')})().finally(()=>db.\$disconnect())"
 ```
 
 ### Images ne s'affichent pas
@@ -290,13 +298,13 @@ node -e "const{PrismaClient}=require('@prisma/client');const db=new PrismaClient
 - Vérifiez `next.config.ts` → `remotePatterns` pour les URLs externes
 
 ### Chatbot ne répond pas
-- Vérifiez la clé z-ai-web-dev-sdk (incluse, pas de clé externe)
+- Vérifiez que `GOOGLE_AI_API_KEY` est configurée côté serveur
 - Vérifiez `/api/chatbot` → POST renvoie JSON
 - Vérifiez `ChatbotKnowledge` → `bun run db:seed` ou réindexez depuis `/dashboard/chatbot`
 
 ### Emails non envoyés (dev)
 - En dev (`MAIL_DRIVER=console`), les emails s'affichent dans le terminal
-- En prod, installez nodemailer : `bun add nodemailer`
+- En prod, configurez `MAIL_DRIVER=smtp`, `MAIL_USER` et `MAIL_APP_PASSWORD`
 
 ---
 
@@ -308,7 +316,7 @@ node -e "const{PrismaClient}=require('@prisma/client');const db=new PrismaClient
 | API try/catch | 38/38 routes (100%) |
 | Code mort | Aucun (audité) |
 | Error boundaries | global-error + error + dashboard/error + not-found |
-| E2E sync | Create → update → publish → delete → visible sur public ✓ |
+| E2E automatisés | Non présents dans `tests/`; parcours manuels avant mise en production requis |
 | Audit log | 25 types d'actions journalisées |
 | Validation | Zod client + serveur (schémas partagés) |
 | RBAC | Préparé (Role/Permission/UserRole) |

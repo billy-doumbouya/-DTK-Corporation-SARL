@@ -58,7 +58,7 @@ export default async function AboutPage() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/40 via-[#101B91]/20 to-[#08A9E8]/15" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 via-[#101B91]/70 to-[#08A9E8]/70" />
         </div>
         {/* Diagonal bottom edge */}
         <div
@@ -66,7 +66,7 @@ export default async function AboutPage() {
           style={{ clipPath: 'polygon(0 100%, 100% 100%, 100% 30%, 0 100%)' }}
         />
         {/* Content */}
-        <div className="container relative z-10 mx-auto px-4 py-20 md:px-6 md:py-28">
+        <div className="public-hero-copy container relative z-10 mx-auto px-4 py-20 md:px-6 md:py-28">
           <Reveal direction="up">
             {/* Breadcrumb */}
             <nav className="mb-4 flex items-center gap-2 text-sm text-white/70" aria-label="Fil d'Ariane">

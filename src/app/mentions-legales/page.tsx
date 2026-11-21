@@ -27,12 +27,12 @@ export default async function LegalPage() {
             alt=""
             fill
             sizes="100vw"
-            className="object-cover opacity-70"
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#101B91]/30 to-[#101B91]/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#101B91]/70 to-[#101B91]/70" />
           <FloatingShapes />
         </div>
-        <div className="container relative z-10 mx-auto px-4 md:px-6">
+        <div className="public-hero-copy container relative z-10 mx-auto px-4 md:px-6">
           <Reveal direction="up">
             <p className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
               <span className="h-px w-8 bg-accent/60" />

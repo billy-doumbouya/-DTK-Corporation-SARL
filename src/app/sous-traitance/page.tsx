@@ -51,10 +51,10 @@ export default async function SubcontractingPage() {
           ) : (
             <Image src="/images/sous-traitance-template.webp" alt="" fill priority sizes="100vw" className="object-cover" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 via-[#101B91]/15 to-[#08A9E8]/20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 via-[#101B91]/70 to-[#08A9E8]/70" />
         </div>
         <div className="container relative z-10 mx-auto px-4 py-20 md:px-6 md:py-28">
-          <Reveal direction="up" className="max-w-3xl text-white">
+          <Reveal direction="up" className="public-hero-copy max-w-3xl text-white">
             <p className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
               <span className="h-px w-8 bg-accent/60" />
               Collaboration

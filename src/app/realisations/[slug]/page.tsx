@@ -78,8 +78,7 @@ export default async function RealisationDetailPage({ params }: PageProps) {
         ) : (
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_35%,rgba(8,169,232,0.34),transparent_38%),linear-gradient(125deg,#08133d,#101b91_58%,#07527c)]" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#071139]/95 via-[#071139]/75 to-[#071139]/20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#071139]/75 via-transparent to-[#071139]/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#071139]/70 via-[#071139]/40 to-[#071139]/70" />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-32 top-20 h-[34rem] w-[34rem] rounded-full border border-white/10"
@@ -89,7 +88,7 @@ export default async function RealisationDetailPage({ params }: PageProps) {
           className="pointer-events-none absolute -right-12 top-40 h-[25rem] w-[25rem] rounded-full border border-white/10"
         />
 
-        <div className="container relative z-10 mx-auto flex min-h-[620px] flex-col justify-between px-4 pb-14 pt-10 sm:min-h-[690px] sm:px-6 sm:pb-16 lg:px-8">
+        <div className="public-hero-copy container relative z-10 mx-auto flex min-h-[620px] flex-col justify-between px-4 pb-14 pt-10 sm:min-h-[690px] sm:px-6 sm:pb-16 lg:px-8">
           <nav
             aria-label="Fil d’Ariane"
             className="flex flex-wrap items-center gap-2 text-sm text-white/65"

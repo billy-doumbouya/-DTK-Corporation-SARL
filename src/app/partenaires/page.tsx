@@ -27,10 +27,10 @@ export default async function PartnersPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <Image src="/images/partners-template.webp" alt="" fill priority sizes="100vw" className="object-cover opacity-70" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 to-[#101B91]/20" />
+          <Image src="/images/partners-template.webp" alt="" fill priority sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 to-[#101B91]/70" />
         </div>
-        <div className="container relative z-10 mx-auto px-4 md:px-6">
+        <div className="public-hero-copy container relative z-10 mx-auto px-4 md:px-6">
           <div className="max-w-3xl">
             <p className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
               <span className="h-px w-8 bg-accent/60" />
@@ -92,7 +92,7 @@ export default async function PartnersPage() {
                       {/* Logo area */}
                       <div className="relative z-10 mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 transition-all group-hover:from-accent/15 group-hover:to-primary/15">
                         {p.logoUrl ? (
-                          <Image src={p.logoUrl} alt={p.name} width={48} height={48} className="h-12 w-auto object-contain" />
+                          <Image src={p.logoUrl} alt={p.name} width={48} height={48} unoptimized className="h-12 w-auto object-contain" />
                         ) : (
                           // Placeholder: first letter in a styled circle
                           <span className="text-2xl font-bold text-gradient-dtk">
@@ -129,12 +129,12 @@ export default async function PartnersPage() {
       {/* CTA become a partner */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <Image src="/images/subcontracting-bg.webp" alt="" fill sizes="100vw" className="object-cover opacity-70" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 to-[#08A9E8]/20" />
+          <Image src="/images/subcontracting-bg.webp" alt="" fill sizes="100vw" loading="eager" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 to-[#08A9E8]/70" />
           <FloatingShapes />
         </div>
         <div className="container relative z-10 mx-auto px-4 text-center md:px-6">
-          <Reveal direction="scale">
+          <Reveal direction="scale" className="public-hero-copy">
             <h2 className="text-2xl font-bold md:text-4xl">Devenir partenaire</h2>
             <p className="mx-auto mt-3 max-w-xl text-primary-foreground/85">
               Vous êtes une institution, une entreprise ou une ONG ? Rejoignez nos partenaires et construisons ensemble l'avenir de la Guinée.

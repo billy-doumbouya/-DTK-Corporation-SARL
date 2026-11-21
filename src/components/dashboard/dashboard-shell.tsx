@@ -81,7 +81,7 @@ function SidebarContent({ user, onNavigate, onLogout, showBrand = true }: Sideba
       <div className="relative z-10 flex min-h-16 shrink-0 items-center border-b border-sidebar-border px-4 py-3">
         {showBrand ? (
           <Link href="/dashboard" onClick={onNavigate} className="group flex min-w-0 items-center gap-2 rounded-2xl bg-white px-3 py-2 shadow-lg shadow-black/10 transition-transform duration-300 hover:scale-[1.02]">
-            <Image src="/logo.svg" alt="" width={32} height={32} priority className="h-9 w-9 shrink-0 rounded-lg" />
+            <Image src="/logo.png" alt="" width={32} height={32} priority className="h-9 w-9 shrink-0 rounded-lg" />
             <span className="min-w-0 text-left">
               <span className="block truncate text-xs font-extrabold tracking-wide text-[#101B91]">DTK CORPORATION</span>
               <span className="mt-0.5 block truncate text-[8px] font-semibold uppercase tracking-[0.08em] text-[#08A9E8]">Professionnalisme · Qualité · Satisfaction</span>

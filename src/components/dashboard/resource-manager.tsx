@@ -199,6 +199,13 @@ export interface ImageFieldProps {
   onFileChange: (file: File | null) => void
 }
 
+interface ImageMediaItem {
+  id: string
+  url: string
+  alt: string
+  filename: string
+}
+
 export function ImageField({
   id,
   label,
@@ -211,7 +218,32 @@ export function ImageField({
 }: ImageFieldProps) {
   const [dragOver, setDragOver] = useState(false)
   const [localPreview, setLocalPreview] = useState<string | null>(null)
+  const [mediaOpen, setMediaOpen] = useState(false)
+  const [mediaItems, setMediaItems] = useState<ImageMediaItem[]>([])
+  const [mediaLoading, setMediaLoading] = useState(false)
   const previewSrc = file ? localPreview : value
+
+  async function openMediaPicker() {
+    setMediaOpen(true)
+    setMediaLoading(true)
+    try {
+      const response = await fetch('/api/admin/media')
+      const result = await response.json()
+      if (!response.ok) {
+        toast.error(result.error || 'Impossible de charger la médiathèque.')
+        return
+      }
+      setMediaItems(
+        Array.isArray(result.items)
+          ? result.items.filter((item: ImageMediaItem) => item.url)
+          : []
+      )
+    } catch {
+      toast.error('Erreur réseau lors du chargement de la médiathèque.')
+    } finally {
+      setMediaLoading(false)
+    }
+  }
 
   function selectFile(selected: File | null) {
     if (!selected) {
@@ -316,7 +348,66 @@ export function ImageField({
         <p className="text-[11px] text-muted-foreground">
           Aperçu instantané. Le fichier choisi sera téléversé lors de l’enregistrement.
         </p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-2"
+          onClick={openMediaPicker}
+        >
+          <Icon name="FaImages" size={13} className="mr-2" />
+          Choisir dans la médiathèque
+        </Button>
       </div>
+
+      <Dialog open={mediaOpen} onOpenChange={setMediaOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Choisir une image déjà téléversée</DialogTitle>
+          </DialogHeader>
+          {mediaLoading ? (
+            <div className="grid max-h-[60vh] grid-cols-2 gap-3 overflow-y-auto sm:grid-cols-3 md:grid-cols-4">
+              {[...Array(8)].map((_, index) => (
+                <div key={index} className="aspect-square animate-pulse rounded-lg bg-muted" />
+              ))}
+            </div>
+          ) : mediaItems.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Aucune image dans la médiathèque. Téléversez-en une ou choisissez un fichier depuis votre appareil.
+            </p>
+          ) : (
+            <div className="grid max-h-[60vh] grid-cols-2 gap-3 overflow-y-auto sm:grid-cols-3 md:grid-cols-4">
+              {mediaItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    onChange(item.url)
+                    onFileChange(null)
+                    setLocalPreview(null)
+                    setMediaOpen(false)
+                  }}
+                  className="group overflow-hidden rounded-xl border border-border text-left transition hover:border-accent hover:shadow-md"
+                >
+                  <span className="relative block aspect-square bg-muted">
+                    <Image
+                      src={item.url}
+                      alt={item.alt || item.filename}
+                      fill
+                      sizes="(max-width: 640px) 50vw, 25vw"
+                      unoptimized
+                      className="object-contain p-2 transition-transform group-hover:scale-105"
+                    />
+                  </span>
+                  <span className="block truncate px-2 py-1.5 text-xs text-muted-foreground">
+                    {item.alt || item.filename}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

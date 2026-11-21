@@ -30,12 +30,12 @@ export default async function ServicesPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <Image src="/images/services-bg.webp" alt="" fill priority sizes="100vw" className="object-cover opacity-70" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 via-[#101B91]/15 to-[#08A9E8]/15" />
+          <Image src="/images/services-bg.webp" alt="" fill priority sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 via-[#101B91]/70 to-[#08A9E8]/70" />
           <div className="absolute -top-20 -right-20 h-[30rem] w-[30rem] rounded-full bg-[#08A9E8] opacity-[0.15] blur-[120px]" />
         </div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
-          <Reveal direction="up" className="max-w-3xl">
+          <Reveal direction="up" className="public-hero-copy max-w-3xl">
             <p className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-accent">
               <span className="h-px w-8 bg-accent/60" />
               Nos expertises

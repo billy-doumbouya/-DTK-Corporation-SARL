@@ -172,6 +172,30 @@
 }
 
 /* ─── Custom scrollbar ───────────────────────────────────────────────────── */
+html {
+  scrollbar-color: var(--dtk-cyan) var(--background);
+  scrollbar-width: thin;
+}
+
+html::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--dtk-cyan), var(--dtk-navy));
+  border: 2px solid var(--background);
+  border-radius: 9999px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--dtk-cyan);
+}
+
 .scroll-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--dtk-cyan) transparent;
@@ -245,6 +269,27 @@
 }
 
 /* ─── Animations ─────────────────────────────────────────────────────────── */
+.public-hero-copy {
+  text-shadow: 0 2px 8px rgb(8 19 61 / 55%);
+}
+
+@keyframes dtk-logo-build {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.7;
+    transform: translateX(-4px);
+  }
+  to {
+    clip-path: inset(0);
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-dtk-logo-build {
+  animation: dtk-logo-build 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @keyframes dtk-float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-20px) rotate(3deg); }

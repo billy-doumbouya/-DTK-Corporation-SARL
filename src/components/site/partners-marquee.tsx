@@ -34,6 +34,7 @@ function PartnerLogo({ partner }: { partner: PartnerData }) {
       alt={partner.name}
       width={140}
       height={60}
+      unoptimized
       className="h-12 w-auto object-contain opacity-70 transition-opacity hover:opacity-100"
     />
   ) : (

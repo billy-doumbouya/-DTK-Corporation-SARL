@@ -52,10 +52,10 @@ export default async function RealisationsPage({
     <>
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <Image src="/images/realisations-template.webp" alt="" fill priority sizes="100vw" className="object-cover opacity-70" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 to-[#101B91]/20" />
+          <Image src="/images/realisations-template.webp" alt="" fill priority sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 to-[#101B91]/70" />
         </div>
-        <div className="container relative z-10 mx-auto px-4 md:px-6">
+        <div className="public-hero-copy container relative z-10 mx-auto px-4 md:px-6">
           <div className="max-w-3xl">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-accent">Portfolio</p>
             <h1 className="text-3xl font-extrabold md:text-5xl">Nos réalisations</h1>

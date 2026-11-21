@@ -294,11 +294,11 @@ export default async function HomePage() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/85 via-[#101B91]/70 to-[#08A9E8]/60" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/70 via-[#101B91]/70 to-[#08A9E8]/70" />
           <HeroDecor />
         </div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
-          <Reveal direction="scale" className="mx-auto max-w-3xl text-center text-primary-foreground">
+          <Reveal direction="scale" className="public-hero-copy mx-auto max-w-3xl text-center text-primary-foreground">
             <h2 className="text-3xl font-bold md:text-5xl">
               Un projet en tête ?
             </h2>

@@ -39,6 +39,12 @@ class ConsoleMailer implements Mailer {
   }
 }
 
+class UnavailableMailer implements Mailer {
+  async send(): Promise<{ ok: boolean; error?: string }> {
+    return { ok: false, error: 'SMTP is not configured for production.' }
+  }
+}
+
 class NodemailerMailer implements Mailer {
   private transporter: Promise<any> | null = null
 
@@ -85,7 +91,10 @@ export function getMailer(): Mailer {
     !!process.env.MAIL_USER &&
     !!process.env.MAIL_APP_PASSWORD &&
     process.env.MAIL_DRIVER !== 'console'
-  instance = useSmtp ? new NodemailerMailer() : new ConsoleMailer()
+  instance =
+    process.env.NODE_ENV === 'production'
+      ? useSmtp ? new NodemailerMailer() : new UnavailableMailer()
+      : useSmtp ? new NodemailerMailer() : new ConsoleMailer()
   return instance
 }
 

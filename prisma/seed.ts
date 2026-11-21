@@ -9,6 +9,7 @@
 import { PrismaClient } from '@prisma/client'
 import { scrypt, randomBytes } from 'node:crypto'
 import { promisify } from 'node:util'
+import { validatePasswordPolicy } from '../src/lib/password'
 
 const scryptAsync = promisify(scrypt)
 const db = new PrismaClient()
@@ -23,6 +24,16 @@ const UNSPLASH = (id: string, w = 1600) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`
 
 async function main() {
+  const adminEmail = process.env.ADMIN_SEED_EMAIL?.trim()
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD
+  if (!adminEmail || !adminPassword) {
+    throw new Error('Set ADMIN_SEED_EMAIL and ADMIN_SEED_PASSWORD before running the seed.')
+  }
+  const passwordPolicy = validatePasswordPolicy(adminPassword)
+  if (!passwordPolicy.ok) {
+    throw new Error(`ADMIN_SEED_PASSWORD is invalid: ${passwordPolicy.reason}`)
+  }
+
   console.log('→ Seeding DTK Corporation database…')
 
   // ─── Permissions & Roles ─────────────────────────────────────────────────
@@ -73,8 +84,6 @@ async function main() {
   }
 
   // ─── Admin user ──────────────────────────────────────────────────────────
-  const adminEmail = process.env.ADMIN_SEED_EMAIL || 'admin@dtk.local'
-  const adminPassword = process.env.ADMIN_SEED_PASSWORD || 'ChangeMe123!'
   const existingAdmin = await db.user.findUnique({ where: { email: adminEmail } })
   if (!existingAdmin) {
     const u = await db.user.create({
@@ -87,7 +96,7 @@ async function main() {
     await db.userRole.create({
       data: { userId: u.id, roleId: adminRole.id },
     })
-    console.log(`  → Admin créé : ${adminEmail} (mot de passe : ${adminPassword})`)
+    console.log(`  → Admin créé : ${adminEmail}`)
   } else {
     // ensure role attached
     await db.userRole.upsert({
@@ -128,8 +137,6 @@ async function main() {
       zones: 'Conakry, Kankan, Siguiri, Dinguiraye',
       legalName: 'DTK Corporation SARL',
       legalForm: 'SARL',
-      legalId: 'GN-CON-2024-001234',
-      legalCapital: '50 000 000 GNF',
       legalAddress: 'Hamdallaye, Route du Niger, Conakry, République de Guinée',
       defaultSeoTitle: 'DTK Corporation SARL — BTP, Agro, Formation, Froid',
       defaultSeoDescription:

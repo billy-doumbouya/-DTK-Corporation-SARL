@@ -94,10 +94,12 @@ let storageInstance: Storage | null = null
 
 export function getStorage(): Storage {
   if (storageInstance) return storageInstance
+  const blobToken = process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN
+  if (!blobToken && process.env.NODE_ENV === 'production') {
+    throw new Error('Vercel Blob must be configured before production uploads are enabled.')
+  }
   storageInstance =
-    process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN && process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN.length > 0
-      ? new VercelBlobStorage()
-      : new LocalStorage()
+    blobToken ? new VercelBlobStorage() : new LocalStorage()
   return storageInstance
 }
 

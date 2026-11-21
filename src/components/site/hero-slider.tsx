@@ -76,15 +76,14 @@ export function HeroSlider({ slides }: { slides: SlideData[] }) {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/70 via-primary/40 to-transparent" />
         </motion.div>
       </AnimatePresence>
 
       {/* Content */}
       <div className="relative z-10 flex h-full items-center">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-2xl text-primary-foreground">
+          <div className="public-hero-copy max-w-2xl text-primary-foreground">
             <AnimatePresence mode="wait">
               <motion.div
                 key={slides[index].id}

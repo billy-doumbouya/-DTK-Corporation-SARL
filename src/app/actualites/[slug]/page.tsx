@@ -56,9 +56,9 @@ export default async function NewsDetailPage({ params }: PageProps) {
             <Icon name="FaNewspaper" size={64} className="text-primary-foreground/40" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/60 to-primary/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/40 to-transparent" />
         <div className="relative z-10 flex h-full items-end">
-          <div className="container mx-auto px-4 pb-12 md:px-6">
+          <div className="public-hero-copy container mx-auto px-4 pb-12 md:px-6">
             <nav className="mb-3 flex items-center gap-2 text-sm text-primary-foreground/70">
               <Link href="/" className="hover:text-accent">Accueil</Link>
               <Icon name="FaChevronRight" size={10} />

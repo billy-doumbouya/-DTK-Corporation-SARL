@@ -11,7 +11,7 @@ const MAX_HISTORY = 6
  * Chatbot API with lightweight RAG.
  * - Retrieves relevant knowledge chunks by keyword similarity.
  * - Builds a strict system prompt scoped to DTK Corporation.
- * - Calls z-ai-web-dev-sdk server-side only.
+ * - Calls Google AI Studio server-side only.
  * - Fallbacks to FAQ match if the model fails.
  */
 export async function POST(request: NextRequest) {

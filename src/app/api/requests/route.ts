@@ -105,14 +105,16 @@ export async function POST(request: NextRequest) {
       mailer.send(adminMail),
       mailer.send(visitorMail),
     ])
-    if (adminRes.status === 'rejected') {
-       
-      console.error('[requests] admin email failed:', adminRes.reason)
-    }
-    if (visitorRes.status === 'rejected') {
-       
-      console.error('[requests] visitor email failed:', visitorRes.reason)
-    }
+    const adminMailError =
+      adminRes.status === 'rejected'
+        ? adminRes.reason
+        : adminRes.value.ok ? null : adminRes.value.error
+    const visitorMailError =
+      visitorRes.status === 'rejected'
+        ? visitorRes.reason
+        : visitorRes.value.ok ? null : visitorRes.value.error
+    if (adminMailError) console.error('[requests] admin email failed:', adminMailError)
+    if (visitorMailError) console.error('[requests] visitor email failed:', visitorMailError)
 
     // Revalidate dashboard home counters
     revalidateForModel('Request')

@@ -60,7 +60,12 @@ export default async function ContactPage() {
             sizes="100vw"
             className="object-cover"
           />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent"
+          />
         </div>
+        <h1 className="sr-only">Contactez DTK Corporation</h1>
       </section>
 
       {/* ─── Quick contact cards ─── */}
