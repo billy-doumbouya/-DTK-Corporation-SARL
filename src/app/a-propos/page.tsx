@@ -50,10 +50,13 @@ export default async function AboutPage() {
       <section className="relative overflow-hidden">
         {/* Background image with diagonal clip */}
         <div className="absolute inset-0">
-          <img
+          <Image
             src="/images/about-team.webp"
             alt=""
-            className="h-full w-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/40 via-[#101B91]/20 to-[#08A9E8]/15" />
         </div>

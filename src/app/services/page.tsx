@@ -5,6 +5,7 @@ import { Reveal, RevealGroup, RevealItem } from '@/components/site/reveal'
 import { RichBackground, DotGrid, FloatingShapes } from '@/components/site/decor-background'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/lib/icon'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -29,7 +30,7 @@ export default async function ServicesPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <img src="/images/services-bg.webp" alt="" className="h-full w-full object-cover opacity-70" />
+          <Image src="/images/services-bg.webp" alt="" fill priority sizes="100vw" className="object-cover opacity-70" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 via-[#101B91]/15 to-[#08A9E8]/15" />
           <div className="absolute -top-20 -right-20 h-[30rem] w-[30rem] rounded-full bg-[#08A9E8] opacity-[0.15] blur-[120px]" />
         </div>

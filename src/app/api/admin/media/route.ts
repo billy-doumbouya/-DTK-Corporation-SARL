@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { logAction, ACTIONS } from '@/lib/audit'
+import { getStorage } from '@/lib/storage'
 
 export const runtime = 'nodejs'
 
@@ -28,8 +29,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) return NextResponse.json({ error: 'ID requis.' }, { status: 400 })
     const media = await db.media.findUnique({ where: { id } })
     if (!media) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
-    if (media.url.startsWith('/uploads/')) {
-      const { getStorage } = await import('@/lib/storage')
+    if (media.url.startsWith('/uploads/') || media.url.includes('blob.vercel-storage.com')) {
       const storage = getStorage()
       if (storage.delete) await storage.delete(media.url).catch(() => {})
     }

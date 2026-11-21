@@ -25,41 +25,33 @@ interface ChatbotSettings {
 }
 
 export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }) {
+  const welcome =
+    settings?.chatbotWelcome ||
+    'Bonjour, je suis Aïcha, l’assistante virtuelle de DTK Corporation. Comment puis-je vous aider ?'
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>([{ role: 'assistant', content: welcome }])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [showTooltip, setShowTooltip] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const hasInteracted = useRef(false)
 
-  const welcome = settings?.chatbotWelcome || 'Bonjour, comment puis-je vous aider ?'
-
-  // First-visit tooltip — shows after 3s if user hasn't seen it (localStorage)
+  // Open the chat after the page settles, unless the visitor has already interacted.
   useEffect(() => {
-    const seen = typeof window !== 'undefined' && localStorage.getItem('dtk_chatbot_tooltip_seen')
-    if (!seen) {
-      const timer = setTimeout(() => setShowTooltip(true), 3000)
-      return () => clearTimeout(timer)
-    }
+    const timer = window.setTimeout(() => {
+      if (!hasInteracted.current) setOpen(true)
+    }, 5000)
+    return () => window.clearTimeout(timer)
   }, [])
 
-  function dismissTooltip() {
-    setShowTooltip(false)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('dtk_chatbot_tooltip_seen', '1')
-    }
-  }
-
   function openChat() {
+    hasInteracted.current = true
     setOpen(true)
-    dismissTooltip()
   }
 
-  useEffect(() => {
-    if (open && messages.length === 0) {
-      setMessages([{ role: 'assistant', content: welcome }])
-    }
-  }, [open, messages.length, welcome])
+  function closeChat() {
+    hasInteracted.current = true
+    setOpen(false)
+  }
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -99,28 +91,10 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
 
   return (
     <>
-      {/* Floating button + tooltip */}
+      {/* Floating chat button */}
       <div className="fixed bottom-5 right-5 z-50">
-        {showTooltip && !open && (
-          <div className="absolute bottom-0 right-16 w-64 animate-fade-in-up rounded-2xl border border-border bg-card p-4 shadow-2xl">
-            <div className="absolute bottom-3 -right-2 h-4 w-4 rotate-45 border-b border-r border-border bg-card" />
-            <div className="relative">
-              <button onClick={dismissTooltip} className="absolute -top-1 -right-1 text-muted-foreground hover:text-foreground" aria-label="Fermer">
-                <Icon name="FaTimes" size={12} />
-              </button>
-              <p className="text-sm font-semibold">Besoin d’aide ?</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Notre assistante virtuelle est là pour répondre à vos questions sur nos services et activités.
-              </p>
-              <button onClick={openChat} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline">
-                Discuter maintenant
-                <Icon name="FaArrowRight" size={10} />
-              </button>
-            </div>
-          </div>
-        )}
         <button
-          onClick={() => { if (open) setOpen(false); else openChat() }}
+          onClick={() => { if (open) closeChat(); else openChat() }}
           aria-label={open ? 'Fermer l’assistant' : 'Ouvrir l’assistant virtuel'}
           className={cn(
             'flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all',
@@ -136,26 +110,27 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
       {open && (
         <div
           role="dialog"
-          aria-label="Assistant virtuel DTK"
-          className="fixed bottom-24 right-5 z-50 flex h-[520px] max-h-[80vh] w-[calc(100vw-2.5rem)] max-w-sm flex-col rounded-xl border border-border bg-card shadow-2xl"
+          aria-labelledby="chatbot-title"
+          aria-modal="false"
+          className="fixed bottom-20 left-3 right-3 z-50 flex h-[70dvh] max-h-[calc(100dvh-7rem)] min-h-0 w-auto max-w-none flex-col rounded-xl border border-border bg-card shadow-2xl sm:bottom-24 sm:left-auto sm:right-5 sm:h-[34rem] sm:w-[calc(100vw-2.5rem)] sm:max-w-sm"
         >
           {/* Header */}
-          <div className="flex items-center gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
-            <AssistantAvatar size={36} />
-            <div className="flex-1">
-              <p className="text-sm font-semibold">Aïcha — Assistante DTK</p>
+          <div className="flex shrink-0 items-center gap-3 border-b border-border bg-primary px-3 py-2.5 text-primary-foreground sm:px-4 sm:py-3">
+            <AssistantAvatar size={32} />
+            <div className="min-w-0 flex-1">
+              <p id="chatbot-title" className="truncate text-sm font-semibold">Aïcha — Assistante DTK</p>
               <p className="flex items-center gap-1 text-xs text-primary-foreground/70">
                 <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
                 En ligne
               </p>
             </div>
-            <button onClick={() => setOpen(false)} aria-label="Fermer" className="hover:text-accent">
+            <button onClick={closeChat} aria-label="Fermer" className="hover:text-accent">
               <Icon name="FaTimes" size={16} />
             </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 scroll-thin">
+          <div ref={scrollRef} aria-live="polite" className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 scroll-thin sm:p-4">
             {messages.map((m, i) => (
               <div
                 key={i}
@@ -191,14 +166,14 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
 
           {/* Quick questions — shown when chat just opened with welcome message */}
           {messages.length <= 1 && !loading && (
-            <div className="border-t border-border p-3">
+            <div className="shrink-0 border-t border-border p-2.5 sm:p-3">
               <p className="mb-2 text-xs font-medium text-muted-foreground">Questions fréquentes :</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1">
                 {QUICK_QUESTIONS.map((q) => (
                   <button
                     key={q}
                     onClick={() => { setInput(q); setTimeout(() => sendWithText(q), 50) }}
-                    className="rounded-full border border-border bg-muted/50 px-3 py-1.5 text-xs font-medium transition-all hover:border-accent hover:bg-accent/10 hover:text-accent"
+                    className="shrink-0 whitespace-nowrap rounded-full border border-border bg-muted/50 px-2.5 py-1.5 text-xs font-medium transition-all hover:border-accent hover:bg-accent/10 hover:text-accent sm:px-3"
                   >
                     {q}
                   </button>
@@ -208,7 +183,7 @@ export function ChatbotWidget({ settings }: { settings: ChatbotSettings | null }
           )}
 
           {/* Input */}
-          <div className="border-t border-border p-3">
+          <div className="shrink-0 border-t border-border p-2.5 sm:p-3">
             <div className="flex gap-2">
               <Input
                 value={input}

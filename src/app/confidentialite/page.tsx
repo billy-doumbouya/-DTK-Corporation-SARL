@@ -3,6 +3,7 @@ import { getSiteSettings } from '@/lib/settings'
 import { Reveal } from '@/components/site/reveal'
 import { RichBackground, FloatingShapes, DotGrid } from '@/components/site/decor-background'
 import { Icon } from '@/lib/icon'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Politique de confidentialité',
@@ -59,10 +60,12 @@ export default async function PrivacyPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground md:py-28">
         <div className="absolute inset-0">
-          <img
+          <Image
             src="/images/abstract-waves.webp"
             alt=""
-            className="h-full w-full object-cover opacity-70"
+            fill
+            sizes="100vw"
+            className="object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#101B91]/30 to-[#08A9E8]/20" />
           <FloatingShapes />

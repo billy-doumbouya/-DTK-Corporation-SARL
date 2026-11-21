@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export default function MediaPage() {
   return (
-    <div>
+    <div className="w-full min-w-0">
       <PageHeader title="Médiathèque" description="Téléversez et gérez les images du site." />
       <MediaLibrary />
     </div>

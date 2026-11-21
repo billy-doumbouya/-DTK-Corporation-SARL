@@ -40,7 +40,10 @@ export function MediaLibrary() {
     }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load()
+  }, [load])
 
   function copyUrl(url: string) {
     navigator.clipboard.writeText(url)
@@ -62,7 +65,7 @@ export function MediaLibrary() {
   }
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Médiathèque</h1>

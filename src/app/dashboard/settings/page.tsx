@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export default function SettingsPage() {
   return (
-    <div>
+    <div className="w-full min-w-0">
       <PageHeader title="Paramètres du site" description="Coordonnées, réseaux sociaux, SEO, informations légales et options du chatbot." />
       <SettingsForm />
     </div>

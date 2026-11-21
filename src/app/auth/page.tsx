@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,7 +16,6 @@ export default function AuthLoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPwd, setShowPwd] = useState(false)
-  const [remember, setRemember] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
 
@@ -55,35 +55,38 @@ export default function AuthLoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-end overflow-y-auto">
-      {/* Login template as FIXED background (doesn't scroll) */}
-      <div className="fixed inset-0 z-0">
-        <img
+    <div className="fixed inset-0 z-[60] isolate h-dvh overflow-y-auto bg-[#eef7fc]">
+      <div className="fixed inset-0 -z-10">
+        <Image
           src="/images/login-template.webp"
           alt=""
-          className="h-full w-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
         />
       </div>
 
-      {/* Form panel — positioned in the white box area on the right */}
-      <div className="relative z-10 flex min-h-screen w-full max-w-lg items-center justify-center px-4 py-12 md:mr-4 lg:mr-8 xl:mr-12 2xl:mr-16">
-        <div className="flex w-full flex-col justify-center">
-          {/* Header */}
+      <div className="relative z-10 flex min-h-full w-full items-center justify-center px-4 py-8 sm:px-8 lg:justify-end lg:px-[5vw]">
+        <section className="w-full max-w-[34rem] rounded-[1.75rem] border border-white/70 bg-white/95 p-6 shadow-[0_24px_80px_rgba(16,27,145,0.18)] backdrop-blur-xl sm:p-9 lg:mr-[1vw] lg:border-white/40 lg:bg-white/75 lg:shadow-none lg:backdrop-blur-sm">
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg">
-              <Icon name="FaLock" size={28} className="text-white" />
+            <div className="mx-auto mb-5 inline-flex rounded-xl bg-white px-4 py-2 shadow-sm ring-1 ring-primary/5">
+              <Image src="/dtk-logo.png" alt="DTK Corporation SARL" width={600} height={295} sizes="100px" className="h-10 w-auto" />
             </div>
-            <h1 className="text-2xl font-bold text-primary">Espace administration</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Connectez-vous pour gérer le contenu du site.
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-accent">
+              Espace sécurisé
+            </p>
+            <h1 className="text-2xl font-bold tracking-tight text-primary sm:text-3xl">
+              Administration
+            </h1>
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Connectez-vous pour gérer les contenus de DTK Corporation.
             </p>
           </div>
 
-          {/* Form card — transparent on desktop (blends with white panel), semi-opaque on mobile */}
-          <form onSubmit={onSubmit} className="flex flex-col gap-5 rounded-2xl bg-white/80 p-6 shadow-xl backdrop-blur-md md:bg-transparent md:shadow-none md:backdrop-blur-none md:p-8 lg:p-10" noValidate>
-            {/* Email field with icon */}
+          <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-semibold text-primary">
+              <Label htmlFor="email" className="text-sm font-semibold text-foreground">
                 Email
               </Label>
               <div className="relative">
@@ -94,12 +97,14 @@ export default function AuthLoginPage() {
                   id="email"
                   type="email"
                   autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
-                  placeholder="admin@dtk.local"
+                  placeholder="nom@entreprise.com"
                   aria-invalid={!!errors.email}
-                  className="pl-10 h-11 border-border/60 bg-white/80 focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+                  className="h-12 border-border/70 bg-white pl-10 shadow-sm transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
                 />
               </div>
               {errors.email && (
@@ -110,9 +115,8 @@ export default function AuthLoginPage() {
               )}
             </div>
 
-            {/* Password field with icon + show/hide */}
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-semibold text-primary">
+              <Label htmlFor="password" className="text-sm font-semibold text-foreground">
                 Mot de passe
               </Label>
               <div className="relative">
@@ -126,7 +130,7 @@ export default function AuthLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
-                  className="pl-10 pr-10 h-11 border-border/60 bg-white/80 focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+                  className="h-12 border-border/70 bg-white pl-10 pr-10 shadow-sm transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
                   aria-invalid={!!errors.password}
                 />
                 <button
@@ -146,30 +150,10 @@ export default function AuthLoginPage() {
               )}
             </div>
 
-            {/* Remember me */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setRemember(!remember)}
-                className={`flex h-5 w-5 items-center justify-center rounded-md border transition-all ${
-                  remember
-                    ? 'border-accent bg-accent text-accent-foreground'
-                    : 'border-border bg-white'
-                }`}
-                aria-label="Se souvenir de moi"
-              >
-                {remember && <Icon name="FaCheck" size={10} />}
-              </button>
-              <span className="text-sm text-muted-foreground cursor-pointer" onClick={() => setRemember(!remember)}>
-                Se souvenir de moi
-              </span>
-            </div>
-
-            {/* Submit button — gradient with icon */}
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-11 rounded-xl bg-gradient-to-r from-accent to-primary text-white shadow-md hover:shadow-lg hover:from-accent/90 hover:to-primary/90 transition-all"
+              className="mt-1 h-12 w-full rounded-xl bg-primary text-white shadow-md shadow-primary/15 transition-all hover:bg-primary/90 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
               {loading ? (
                 <>
@@ -184,18 +168,7 @@ export default function AuthLoginPage() {
               )}
             </Button>
 
-            {/* Divider */}
-            <div className="relative py-2">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border/40" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white/80 px-3 text-xs text-muted-foreground">ou</span>
-              </div>
-            </div>
-
-            {/* Back to site */}
-            <Button asChild variant="ghost" className="w-full h-10 text-sm">
+            <Button asChild variant="ghost" className="h-10 w-full text-sm text-muted-foreground hover:text-primary">
               <Link href="/">
                 <Icon name="FaArrowLeft" size={14} className="mr-2" />
                 Retour au site
@@ -203,12 +176,11 @@ export default function AuthLoginPage() {
             </Button>
           </form>
 
-          {/* Security note */}
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            <Icon name="FaShieldAlt" size={10} className="inline mr-1" />
-            Accès réservé — DTK Corporation SARL
+          <p className="mt-5 flex items-center justify-center gap-2 border-t border-primary/10 pt-4 text-xs text-muted-foreground">
+            <Icon name="FaShieldAlt" size={12} className="text-accent" />
+            Connexion privée · DTK Corporation SARL
           </p>
-        </div>
+        </section>
       </div>
     </div>
   )

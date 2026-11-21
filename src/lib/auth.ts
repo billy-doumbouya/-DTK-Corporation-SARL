@@ -2,62 +2,48 @@ import { db } from '@/lib/db'
 import { hashPassword, verifyPassword, validatePasswordPolicy } from '@/lib/password'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { createHash, randomBytes } from 'node:crypto'
 
 export const SESSION_COOKIE = 'dtk_session'
 const SESSION_TTL_SECONDS = 60 * 60 * 12 // 12 hours
 
-/**
- * Session token format: "userId:randomToken". The token is stored hashed in DB
- * via AuditLog detail field is NOT used; instead we keep a sessions map in memory.
- * For a production site with Postgres, move this to a Session table.
- *
- * Sandbox: in-memory store keyed by token.
- */
-
-interface SessionEntry {
-  userId: string
-  token: string
-  expiresAt: number
-}
-
-// Use globalThis so the session map is shared across all bundles
-// (RSC server, API routes, etc.) in the same Node.js process.
-const globalForSessions = globalThis as unknown as {
-  __dtkSessions?: Map<string, SessionEntry>
-}
-const sessions: Map<string, SessionEntry> =
-  globalForSessions.__dtkSessions ?? new Map<string, SessionEntry>()
-if (!globalForSessions.__dtkSessions) {
-  globalForSessions.__dtkSessions = sessions
-}
-
 function randomToken(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36) + Math.random().toString(36).slice(2)
+  return randomBytes(48).toString('base64url')
+}
+
+function tokenHash(token: string): string {
+  return createHash('sha256').update(token).digest('hex')
 }
 
 export async function createSession(userId: string): Promise<string> {
   const token = randomToken()
-  sessions.set(token, {
-    userId,
-    token,
-    expiresAt: Date.now() + SESSION_TTL_SECONDS * 1000,
+  await db.session.create({
+    data: {
+      tokenHash: tokenHash(token),
+      userId,
+      expiresAt: new Date(Date.now() + SESSION_TTL_SECONDS * 1000),
+    },
   })
   return token
 }
 
 export function destroySession(token: string): void {
-  sessions.delete(token)
+  void db.session.deleteMany({ where: { tokenHash: tokenHash(token) } }).catch(() => {})
 }
 
-export function getSession(token: string | undefined): SessionEntry | null {
+export async function getSession(token: string | undefined) {
   if (!token) return null
-  const entry = sessions.get(token)
-  if (!entry) return null
-  if (entry.expiresAt < Date.now()) {
-    sessions.delete(token)
+  const entry = await db.session.findUnique({ where: { tokenHash: tokenHash(token) } })
+  if (!entry || entry.expiresAt < new Date()) {
+    if (entry) await db.session.delete({ where: { id: entry.id } }).catch(() => {})
     return null
   }
-  return entry
+  return {
+    userId: entry.userId,
+    token,
+    expiresAt: entry.expiresAt.getTime(),
+    createdAt: entry.createdAt.getTime(),
+  }
 }
 
 export async function setSessionCookie(token: string) {
@@ -86,7 +72,7 @@ export async function getSessionToken(): Promise<string | undefined> {
  */
 export async function getCurrentUser() {
   const token = await getSessionToken()
-  const entry = getSession(token)
+  const entry = await getSession(token)
   if (!entry) return null
   const user = await db.user.findUnique({
     where: { id: entry.userId },
@@ -103,7 +89,7 @@ export async function getCurrentUser() {
     },
   })
   if (!user) return null
-  return user
+  return { ...user, sessionStartedAt: entry.createdAt }
 }
 
 /**

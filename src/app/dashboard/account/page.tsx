@@ -17,7 +17,7 @@ export default async function AccountPage() {
   })
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <PageHeader title="Mon compte" description="Gérez votre profil et votre mot de passe." />
       <AccountForm user={{ email: user.email, name: user.name, lastLoginAt: lastLogin?.createdAt.toISOString() }} />
     </div>

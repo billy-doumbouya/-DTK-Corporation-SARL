@@ -17,8 +17,12 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const services = await db.service.findMany({ where: { isPublished: true }, select: { slug: true } })
-  return services.map((s) => ({ slug: s.slug }))
+  try {
+    const services = await db.service.findMany({ where: { isPublished: true }, select: { slug: true } })
+    return services.map((s) => ({ slug: s.slug }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

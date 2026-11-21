@@ -49,7 +49,7 @@ export default async function SubcontractingPage() {
           {page?.imageUrl ? (
             <Image src={page.imageUrl} alt={page.imageAlt || 'Sous-traitance'} fill priority sizes="100vw" className="object-cover" />
           ) : (
-            <img src="/images/sous-traitance-template.webp" alt="" className="h-full w-full object-cover" />
+            <Image src="/images/sous-traitance-template.webp" alt="" fill priority sizes="100vw" className="object-cover" />
           )}
           <div className="absolute inset-0 bg-gradient-to-br from-[#101B91]/30 via-[#101B91]/15 to-[#08A9E8]/20" />
         </div>

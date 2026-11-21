@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { Icon } from '@/lib/icon'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -27,7 +29,28 @@ export interface FieldDef {
 export interface ColumnDef {
   key: string
   label: string
-  render?: (item: any) => React.ReactNode
+  format?:
+    | 'text-medium'
+    | 'text-muted'
+    | 'text-muted-xs'
+    | 'text-muted-xs-clamp'
+    | 'text-medium-clamp'
+    | 'text-primary-bold'
+    | 'code'
+    | 'badge'
+    | 'mapped-badge'
+    | 'published'
+    | 'icon'
+    | 'icon-tile'
+    | 'image'
+    | 'date-muted-xs'
+    | 'link-muted-xs'
+    | 'service-title'
+  fallback?: string
+  altKey?: string
+  imageFit?: 'contain' | 'cover'
+  labels?: Record<string, string>
+  variants?: Record<string, 'default' | 'secondary' | 'outline'>
 }
 
 interface ResourceManagerProps {
@@ -38,6 +61,104 @@ interface ResourceManagerProps {
   description?: string
   revalidatePath?: string
   emptyMessage?: string
+}
+
+function ImagePlaceholder() {
+  return (
+    <span className="inline-flex h-12 w-16 items-center justify-center rounded-lg border border-dashed bg-muted/40 text-muted-foreground" aria-label="Image indisponible">
+      <Icon name="FaImage" size={16} />
+    </span>
+  )
+}
+
+function ResourceImage({ src, alt, fit }: { src: string; alt: string; fit: 'contain' | 'cover' }) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) return <ImagePlaceholder />
+
+  return (
+    <span className="inline-flex h-12 w-16 items-center justify-center overflow-hidden rounded-lg border bg-muted/40">
+      <Image
+        src={src}
+        alt={alt}
+        width={96}
+        height={72}
+        className={cn('h-full w-full', fit === 'contain' ? 'object-contain p-1' : 'object-cover')}
+        onError={() => setFailed(true)}
+      />
+    </span>
+  )
+}
+
+function renderColumn(column: ColumnDef, item: Record<string, unknown>) {
+  const rawValue = item[column.key]
+  const value = rawValue == null || rawValue === '' ? column.fallback ?? '' : String(rawValue)
+  const label = column.labels?.[String(rawValue)] ?? value
+
+  switch (column.format) {
+    case 'text-medium':
+      return <span className="font-medium">{label}</span>
+    case 'text-muted':
+      return <span className="text-muted-foreground">{label}</span>
+    case 'text-muted-xs':
+      return <span className="text-xs text-muted-foreground">{label}</span>
+    case 'text-muted-xs-clamp':
+      return <span className="line-clamp-1 text-xs text-muted-foreground">{label}</span>
+    case 'text-medium-clamp':
+      return <span className="line-clamp-1 font-medium">{label}</span>
+    case 'text-primary-bold':
+      return <span className="font-bold text-primary">{label}</span>
+    case 'code':
+      return <code className="text-xs text-muted-foreground">{label}</code>
+    case 'badge':
+      return <Badge variant="outline">{label || '—'}</Badge>
+    case 'mapped-badge':
+      return (
+        <Badge variant={column.variants?.[String(rawValue)] || 'outline'}>
+          {label || '—'}
+        </Badge>
+      )
+    case 'published':
+      return <Badge variant={rawValue ? 'default' : 'secondary'}>{rawValue ? 'Oui' : 'Non'}</Badge>
+    case 'icon':
+      return <Icon name={String(rawValue || column.fallback || 'FaInfoCircle')} size={16} className="text-accent" />
+    case 'icon-tile':
+      return (
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <Icon name={String(rawValue || column.fallback || 'FaInfoCircle')} size={16} />
+        </span>
+      )
+    case 'image': {
+      if (typeof rawValue !== 'string' || !rawValue) {
+        return <ImagePlaceholder />
+      }
+
+      const altValue = column.altKey ? item[column.altKey] : undefined
+      const alt = typeof altValue === 'string' && altValue ? altValue : column.label || 'Image'
+      return <ResourceImage src={rawValue} alt={alt} fit={column.imageFit || 'cover'} />
+    }
+    case 'date-muted-xs': {
+      if (!rawValue) return <span className="text-xs text-muted-foreground">{column.fallback || '—'}</span>
+      const date = rawValue instanceof Date ? rawValue : new Date(String(rawValue))
+      return Number.isNaN(date.getTime())
+        ? <span className="text-xs text-muted-foreground">{column.fallback || '—'}</span>
+        : <span className="text-xs text-muted-foreground">{date.toLocaleDateString('fr-FR')}</span>
+    }
+    case 'link-muted-xs':
+      return rawValue
+        ? <a href={String(rawValue)} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline">{label}</a>
+        : <span className="text-xs text-muted-foreground">{column.fallback || '—'}</span>
+    case 'service-title': {
+      const service = item.service
+      if (typeof service !== 'object' || service === null) {
+        return <span className="text-muted-foreground">{column.fallback || '—'}</span>
+      }
+      const related = service as { shortTitle?: unknown; title?: unknown }
+      return <span className="text-muted-foreground">{String(related.shortTitle || related.title || column.fallback || '—')}</span>
+    }
+    default:
+      return typeof rawValue === 'boolean' ? (rawValue ? 'Oui' : 'Non') : label
+  }
 }
 
 export function ResourceManager({
@@ -69,6 +190,7 @@ export function ResourceManager({
   }, [apiPath])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load()
   }, [load])
 
@@ -131,7 +253,7 @@ export function ResourceManager({
   }
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">{title}</h1>
@@ -164,7 +286,7 @@ export function ResourceManager({
                   <tr key={item.id} className="hover:bg-muted/20">
                     {columns.map((c) => (
                       <td key={c.key} className="px-4 py-3">
-                        {c.render ? c.render(item) : (typeof item[c.key] === 'boolean' ? (item[c.key] ? 'Oui' : 'Non') : String(item[c.key] ?? ''))}
+                        {renderColumn(c, item)}
                       </td>
                     ))}
                     <td className="px-4 py-3">
@@ -245,7 +367,7 @@ function EditDialog({
     const init: Record<string, any> = {}
     for (const f of fields) {
       if (f.type === 'switch') init[f.name] = item[f.name] ?? false
-      else if (f.type === 'number') init[f.name] = item[f.name] ?? 0
+      else if (f.type === 'number') init[f.name] = item[f.name] ?? ''
       else init[f.name] = item[f.name] ?? ''
     }
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -265,14 +387,18 @@ function EditDialog({
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto scroll-thin">
-        <DialogHeader>
+      <DialogContent
+        overlayClassName="lg:left-64"
+        className="flex max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-none flex-col overflow-hidden p-4 sm:max-h-[calc(100dvh-2rem)] sm:w-[96vw] sm:max-w-[1280px] sm:p-6 lg:left-[calc(16rem+((100vw-16rem)/2))] lg:w-[min(1280px,calc(100vw-18rem))]"
+      >
+        <DialogHeader className="shrink-0 pr-8">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={submit} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        <form onSubmit={submit} className="flex min-h-0 flex-1 flex-col">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pb-5 scroll-thin">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {fields.map((f) => (
-              <div key={f.name} className={f.type === 'textarea' ? 'col-span-2 space-y-1.5' : 'space-y-1.5'}>
+              <div key={f.name} className={f.type === 'textarea' ? 'space-y-1.5 sm:col-span-2 xl:col-span-3' : 'min-w-0 space-y-1.5'}>
                 <Label htmlFor={f.name}>
                   {f.label}
                   {f.required && <span className="text-destructive ml-0.5">*</span>}
@@ -290,8 +416,9 @@ function EditDialog({
                   <Input
                     id={f.name}
                     type="number"
-                    value={values[f.name] || 0}
-                    onChange={(e) => setField(f.name, Number(e.target.value))}
+                    value={values[f.name] ?? ''}
+                    onChange={(e) => setField(f.name, e.target.value === '' ? '' : Number(e.target.value))}
+                    placeholder={f.placeholder}
                     required={f.required}
                   />
                 )}
@@ -336,8 +463,9 @@ function EditDialog({
                 {f.help && <p className="text-xs text-muted-foreground">{f.help}</p>}
               </div>
             ))}
+            </div>
           </div>
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex shrink-0 justify-end gap-2 border-t border-border pt-4">
             <Button type="button" variant="outline" onClick={onClose}>Annuler</Button>
             <Button type="submit" disabled={saving}>
               {saving ? <Icon name="FaCircleNotch" size={14} className="mr-2 animate-spin" /> : <Icon name="FaSave" size={14} className="mr-2" />}

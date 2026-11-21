@@ -47,9 +47,9 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: "DTK Corporation SARL" }],
     creator: "DTK Corporation SARL",
     icons: {
-      icon: "/dtk-favicon.svg",
-      shortcut: "/dtk-favicon.svg",
-      apple: "/dtk-favicon.svg",
+      icon: "/logo.png",
+      shortcut: "/logo.png",
+      apple: "/logo.png",
     },
     openGraph: {
       type: "website",

@@ -1,21 +1,21 @@
 import { ResourceManager, type FieldDef, type ColumnDef } from '@/components/dashboard/resource-manager'
-import { Badge } from '@/components/ui/badge'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Partenaires' }
 export const dynamic = 'force-dynamic'
 
 const columns: ColumnDef[] = [
-  { key: 'name', label: 'Nom', render: (i) => <span className="font-medium">{i.name}</span> },
-  { key: 'websiteUrl', label: 'Site web', render: (i) => i.websiteUrl ? <a href={i.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-accent text-xs hover:underline">{i.websiteUrl}</a> : <span className="text-muted-foreground text-xs">—</span> },
-  { key: 'isPublished', label: 'Publié', render: (i) => <Badge variant={i.isPublished ? 'default' : 'secondary'}>{i.isPublished ? 'Oui' : 'Non'}</Badge> },
+  { key: 'logoUrl', label: 'Logo', format: 'image', imageFit: 'contain', altKey: 'name' },
+  { key: 'name', label: 'Nom', format: 'text-medium' },
+  { key: 'websiteUrl', label: 'Site web', format: 'link-muted-xs', fallback: '—' },
+  { key: 'isPublished', label: 'Publié', format: 'published' },
 ]
 
 const fields: FieldDef[] = [
-  { name: 'name', label: 'Nom du partenaire', type: 'text', required: true },
-  { name: 'logoUrl', label: 'URL du logo', type: 'text' },
+  { name: 'name', label: 'Nom du partenaire', type: 'text', required: true, placeholder: 'Ex : Partenaire Guinée SA' },
+  { name: 'logoUrl', label: 'URL du logo', type: 'text', placeholder: 'https://… ou /uploads/logo-partenaire.png' },
   { name: 'websiteUrl', label: 'Site web', type: 'text', placeholder: 'https://…' },
-  { name: 'order', label: 'Ordre', type: 'number' },
+  { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
   { name: 'isPublished', label: 'Publié', type: 'switch' },
 ]
 

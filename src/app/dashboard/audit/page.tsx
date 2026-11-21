@@ -132,15 +132,15 @@ export default async function AuditPage({
   }
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <PageHeader
         title="Journal d’audit"
         description={`${total} action(s) enregistrée(s). Toutes les opérations sensibles sont tracées.`}
       />
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_240px]">
+      <div className="grid w-full min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_240px]">
         {/* Log table */}
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+        <div className="min-w-0 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
           {/* Filters */}
           <div className="border-b border-border p-4">
             <form action="/dashboard/audit" method="get" className="relative">

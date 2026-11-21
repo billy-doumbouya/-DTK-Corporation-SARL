@@ -22,7 +22,7 @@ export const getSiteSettings = unstable_cache(
   { revalidate: 60, tags: ['site-settings'] }
 )
 
-export async function updateSiteSettings(data: Partial<Awaited<ReturnType<getSiteSettingsRaw>>>) {
+export async function updateSiteSettings(data: Partial<Awaited<ReturnType<typeof getSiteSettingsRaw>>>) {
   const current = await getSiteSettingsRaw()
   return db.siteSettings.update({ where: { id: 'singleton' }, data: { ...current, ...data } })
 }

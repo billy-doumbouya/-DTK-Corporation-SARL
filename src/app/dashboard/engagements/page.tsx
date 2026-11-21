@@ -1,24 +1,22 @@
 import { ResourceManager, type FieldDef, type ColumnDef } from '@/components/dashboard/resource-manager'
 import { ICON_OPTIONS } from '@/components/dashboard/icon-options'
-import { Icon } from '@/lib/icon'
-import { Badge } from '@/components/ui/badge'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Engagements QHSSE' }
 export const dynamic = 'force-dynamic'
 
 const columns: ColumnDef[] = [
-  { key: 'iconKey', label: '', render: (i) => <Icon name={i.iconKey || 'FaShieldAlt'} size={16} className="text-accent" /> },
-  { key: 'title', label: 'Titre', render: (i) => <span className="font-medium">{i.title}</span> },
-  { key: 'description', label: 'Description', render: (i) => <span className="text-muted-foreground text-xs line-clamp-1">{i.description}</span> },
-  { key: 'isPublished', label: 'Publié', render: (i) => <Badge variant={i.isPublished ? 'default' : 'secondary'}>{i.isPublished ? 'Oui' : 'Non'}</Badge> },
+  { key: 'iconKey', label: '', format: 'icon', fallback: 'FaShieldAlt' },
+  { key: 'title', label: 'Titre', format: 'text-medium' },
+  { key: 'description', label: 'Description', format: 'text-muted-xs-clamp' },
+  { key: 'isPublished', label: 'Publié', format: 'published' },
 ]
 
 const fields: FieldDef[] = [
   { name: 'title', label: 'Titre', type: 'text', required: true, placeholder: 'Ex : Zéro accident' },
-  { name: 'description', label: 'Description', type: 'textarea', required: true },
-  { name: 'iconKey', label: 'Icône', type: 'select', options: ICON_OPTIONS },
-  { name: 'order', label: 'Ordre', type: 'number' },
+  { name: 'description', label: 'Description', type: 'textarea', required: true, placeholder: 'Décrivez en une phrase l’engagement et sa mise en œuvre.' },
+  { name: 'iconKey', label: 'Icône', type: 'select', options: ICON_OPTIONS, placeholder: 'Choisir une icône…' },
+  { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
   { name: 'isPublished', label: 'Publié', type: 'switch' },
 ]
 

@@ -16,5 +16,11 @@ export default async function DashboardLayout({
   const user = await requireAuth().catch(() => null)
   if (!user) redirect('/auth')
 
-  return <DashboardShell user={{ email: user.email, name: user.name }}>{children}</DashboardShell>
+  return (
+    <DashboardShell
+      user={{ email: user.email, name: user.name, sessionStartedAt: user.sessionStartedAt }}
+    >
+      {children}
+    </DashboardShell>
+  )
 }

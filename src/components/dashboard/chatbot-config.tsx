@@ -32,7 +32,7 @@ export function ChatbotConfig() {
   const [chunks, setChunks] = useState<KnowledgeChunk[]>([])
   const [loading, setLoading] = useState(true)
   const [reindexing, setReindexing] = useState(false)
-  const [newConfig, setNewConfig] = useState({ provider: 'zai', model: 'default', order: 1, enabled: true })
+  const [newConfig, setNewConfig] = useState({ provider: 'gemini', model: 'gemini-2.0-flash', order: 1, enabled: true })
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -48,7 +48,10 @@ export function ChatbotConfig() {
     }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load()
+  }, [load])
 
   async function reindex() {
     setReindexing(true)
@@ -77,7 +80,7 @@ export function ChatbotConfig() {
       })
       if (res.ok) {
         toast.success('Modèle ajouté.')
-        setNewConfig({ provider: 'zai', model: 'default', order: configs.length + 1, enabled: true })
+        setNewConfig({ provider: 'gemini', model: 'gemini-2.0-flash', order: configs.length + 1, enabled: true })
         load()
       } else {
         toast.error('Erreur.')

@@ -52,7 +52,7 @@ class LocalStorage implements Storage {
 
 /**
  * Vercel Blob implementation. Lazy import so the dependency is optional
- * in dev. In production set BLOB_READ_WRITE_TOKEN and it will be used.
+ * in dev. In production set BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN and it will be used.
  */
 class VercelBlobStorage implements Storage {
   async save(buffer: Buffer, mimeType: string, originalName: string): Promise<UploadResult> {
@@ -62,7 +62,7 @@ class VercelBlobStorage implements Storage {
     const result = await put(pathname, buffer, {
       access: 'public',
       contentType: mimeType,
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN,
     })
     return {
       url: result.url,
@@ -70,6 +70,11 @@ class VercelBlobStorage implements Storage {
       mimeType,
       size: buffer.length,
     }
+  }
+
+  async delete(url: string): Promise<void> {
+    const { del } = await import('@vercel/blob')
+    await del(url, { token: process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN })
   }
 }
 
@@ -90,7 +95,7 @@ let storageInstance: Storage | null = null
 export function getStorage(): Storage {
   if (storageInstance) return storageInstance
   storageInstance =
-    process.env.BLOB_READ_WRITE_TOKEN && process.env.BLOB_READ_WRITE_TOKEN.length > 0
+    process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN && process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN.length > 0
       ? new VercelBlobStorage()
       : new LocalStorage()
   return storageInstance

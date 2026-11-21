@@ -28,7 +28,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}))
     const message: string = typeof body.message === 'string' ? body.message.slice(0, MAX_MESSAGE_LENGTH) : ''
     const history: { role: string; content: string }[] = Array.isArray(body.history)
-      ? body.history.slice(-MAX_HISTORY)
+      ? body.history
+          .slice(-MAX_HISTORY)
+          .filter((item: any) =>
+            item &&
+            (item.role === 'user' || item.role === 'assistant') &&
+            typeof item.content === 'string'
+          )
+          .map((item: any) => ({
+            role: item.role,
+            content: item.content.slice(0, MAX_MESSAGE_LENGTH),
+          }))
       : []
 
     if (!message.trim()) {
@@ -82,21 +92,52 @@ SLOGAN : « Professionnalisme, Qualité, Satisfaction ».`
       { role: 'user', content: message },
     ]
 
-    // ─── Try the LLM ──────────────────────────────────────────────────────
-    try {
-      const ZAI = (await import('z-ai-web-dev-sdk')).default
-      const zai = await ZAI.create()
-      const completion = await zai.chat.completions.create({
-        messages: messages as any,
-        thinking: { type: 'disabled' },
-      })
-      const reply = completion.choices[0]?.message?.content?.trim()
-      if (reply) {
-        return NextResponse.json({ reply })
+    // ─── Try Google AI Studio models in configured order ─────────────────
+    const apiKey = process.env.GOOGLE_AI_API_KEY
+    const configured = await db.chatbotModelConfig.findMany({
+      where: { enabled: true },
+      orderBy: { order: 'asc' },
+    })
+    const models =
+      configured.length > 0
+        ? configured.map((entry) => entry.model)
+        : (process.env.CHATBOT_MODELS || 'gemini-2.0-flash,gemini-1.5-flash')
+            .split(',')
+            .map((entry) => entry.trim())
+            .filter(Boolean)
+
+    if (apiKey) {
+      for (const model of models) {
+        try {
+          const contents = [
+            { role: 'user', parts: [{ text: systemPrompt }] },
+            ...history.map((entry) => ({
+              role: entry.role === 'assistant' ? 'model' : 'user',
+              parts: [{ text: entry.content }],
+            })),
+            { role: 'user', parts: [{ text: message }] },
+          ]
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents,
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { temperature: 0.2, maxOutputTokens: 300 },
+              }),
+              signal: AbortSignal.timeout(15000),
+            }
+          )
+          if (!response.ok) continue
+          const completion = await response.json()
+          const reply = completion.candidates?.[0]?.content?.parts?.map((p: any) => p.text || '').join('').trim()
+          if (reply) return NextResponse.json({ reply, model })
+        } catch (err) {
+          console.error('[chatbot] Gemini model error:', err)
+        }
       }
-    } catch (err) {
-       
-      console.error('[chatbot] LLM error:', err)
     }
 
     // ─── Fallback: best FAQ match ─────────────────────────────────────────

@@ -55,7 +55,7 @@ export function SettingsForm() {
   if (!data) return <p className="text-muted-foreground">Impossible de charger les paramètres.</p>
 
   return (
-    <form onSubmit={save} className="space-y-8">
+    <form onSubmit={save} className="w-full min-w-0 space-y-8">
       {/* Identité */}
       <Section title="Identité" icon="FaBuilding">
         <div className="grid gap-4 sm:grid-cols-2">

@@ -7,7 +7,7 @@ export const runtime = 'nodejs'
 export async function POST() {
   try {
     const token = await getSessionToken()
-    const session = getSession(token)
+    const session = await getSession(token)
     if (session) {
       destroySession(session.token)
       await db.auditLog.create({

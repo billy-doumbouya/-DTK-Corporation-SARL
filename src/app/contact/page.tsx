@@ -6,6 +6,7 @@ import { Reveal } from '@/components/site/reveal'
 import { RichBackground, HeroDecor, DotGrid, PathLines, FloatingShapes } from '@/components/site/decor-background'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
@@ -51,10 +52,13 @@ export default async function ContactPage() {
       {/* ─── Hero with background image (text is already in the image) ─── */}
       <section className="relative flex h-[50vh] min-h-[380px] items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <Image
             src="/images/contact-service.webp"
             alt="Contact — Parlons de votre projet"
-            className="h-full w-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
         </div>
       </section>
@@ -118,6 +122,15 @@ export default async function ContactPage() {
                     <p className="font-semibold">{settings?.legalName || 'DTK Corporation SARL'}</p>
                     {settings?.addressCity && <p className="text-xs text-muted-foreground">{settings.addressCity}, Guinée</p>}
                   </div>
+                  <a
+                    href={`https://www.openstreetmap.org/search?query=${mapQuery}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-lg bg-card/95 px-3 py-2 text-xs font-medium text-foreground shadow-lg backdrop-blur transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    Ouvrir la carte
+                    <Icon name="FaExternalLinkAlt" size={10} aria-hidden="true" />
+                  </a>
                 </div>
               </Reveal>
 

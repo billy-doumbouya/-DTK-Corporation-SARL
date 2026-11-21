@@ -25,28 +25,25 @@ export function revalidateAll() {
   revalidatePath('/')
   revalidatePath('/a-propos')
   revalidatePath('/services')
-  revalidatePath('/services', 'page')
   revalidatePath('/produits')
   revalidatePath('/sous-traitance')
   revalidatePath('/realisations')
-  revalidatePath('/realisations', 'page')
   revalidatePath('/actualites')
-  revalidatePath('/actualites', 'page')
   revalidatePath('/partenaires')
   revalidatePath('/contact')
   revalidatePath('/mentions-legales')
   revalidatePath('/confidentialite')
   revalidatePath('/sitemap.xml')
-  revalidateTag('site-settings')
-  revalidateTag('services')
-  revalidateTag('slides')
-  revalidateTag('partners')
-  revalidateTag('faq')
-  revalidateTag('news')
-  revalidateTag('realisations')
-  revalidateTag('products')
-  revalidateTag('formations')
-  revalidateTag('chatbot-knowledge')
+  revalidateTag('site-settings', 'max')
+  revalidateTag('services', 'max')
+  revalidateTag('slides', 'max')
+  revalidateTag('partners', 'max')
+  revalidateTag('faq', 'max')
+  revalidateTag('news', 'max')
+  revalidateTag('realisations', 'max')
+  revalidateTag('products', 'max')
+  revalidateTag('formations', 'max')
+  revalidateTag('chatbot-knowledge', 'max')
 }
 
 export function revalidateForModel(model: string) {
@@ -55,42 +52,39 @@ export function revalidateForModel(model: string) {
     case 'ServiceImage':
       revalidatePath('/')
       revalidatePath('/services')
-      revalidatePath('/services', 'page')
-      revalidateTag('services')
+      revalidateTag('services', 'max')
       break
     case 'Product':
       revalidatePath('/produits')
-      revalidateTag('products')
+      revalidateTag('products', 'max')
       break
     case 'Formation':
       revalidatePath('/services/formation')
-      revalidateTag('formations')
+      revalidateTag('formations', 'max')
       break
     case 'Slide':
       revalidatePath('/')
-      revalidateTag('slides')
+      revalidateTag('slides', 'max')
       break
     case 'Partner':
       revalidatePath('/')
       revalidatePath('/partenaires')
-      revalidateTag('partners')
+      revalidateTag('partners', 'max')
       break
     case 'NewsArticle':
       revalidatePath('/actualites')
-      revalidatePath('/actualites', 'page')
-      revalidateTag('news')
+      revalidateTag('news', 'max')
       break
     case 'Realisation':
     case 'RealisationImage':
       revalidatePath('/realisations')
-      revalidatePath('/realisations', 'page')
-      revalidateTag('realisations')
+      revalidateTag('realisations', 'max')
       break
     case 'FaqItem':
     case 'ChatbotKnowledge':
     case 'ChatbotModelConfig':
-      revalidateTag('faq')
-      revalidateTag('chatbot-knowledge')
+      revalidateTag('faq', 'max')
+      revalidateTag('chatbot-knowledge', 'max')
       break
     case 'SiteSettings':
     case 'SiteStat':

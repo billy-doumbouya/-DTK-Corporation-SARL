@@ -40,8 +40,8 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     const body = await request.json().catch(() => ({}))
     const data: any = {
-      provider: String(body.provider || 'zai'),
-      model: String(body.model || 'default'),
+      provider: String(body.provider || 'gemini'),
+      model: String(body.model || 'gemini-2.0-flash'),
       order: Number(body.order) || 0,
       enabled: body.enabled !== false,
     }

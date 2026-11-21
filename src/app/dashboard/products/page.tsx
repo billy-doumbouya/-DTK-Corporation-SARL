@@ -1,6 +1,5 @@
 import { db } from '@/lib/db'
 import { ResourceManager, type FieldDef, type ColumnDef } from '@/components/dashboard/resource-manager'
-import { Badge } from '@/components/ui/badge'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Produits' }
@@ -11,22 +10,23 @@ export default async function ProductsAdminPage() {
   const serviceOptions = services.map((s) => ({ value: s.id, label: s.shortTitle || s.title }))
 
   const columns: ColumnDef[] = [
-    { key: 'name', label: 'Nom', render: (i) => <span className="font-medium">{i.name}</span> },
-    { key: 'service', label: 'Service', render: (i) => <span className="text-muted-foreground">{i.service?.shortTitle || i.service?.title || '—'}</span> },
-    { key: 'unit', label: 'Unité', render: (i) => <span className="text-muted-foreground">{i.unit || '—'}</span> },
-    { key: 'isPublished', label: 'Publié', render: (i) => <Badge variant={i.isPublished ? 'default' : 'secondary'}>{i.isPublished ? 'Oui' : 'Non'}</Badge> },
+    { key: 'imageUrl', label: 'Image', format: 'image', altKey: 'imageAlt' },
+    { key: 'name', label: 'Nom', format: 'text-medium' },
+    { key: 'service', label: 'Service', format: 'service-title', fallback: '—' },
+    { key: 'unit', label: 'Unité', format: 'text-muted', fallback: '—' },
+    { key: 'isPublished', label: 'Publié', format: 'published' },
   ]
 
   const fields: FieldDef[] = [
-    { name: 'serviceId', label: 'Service associé', type: 'select', options: serviceOptions, required: true },
-    { name: 'name', label: 'Nom', type: 'text', required: true },
-    { name: 'slug', label: 'Slug', type: 'text', required: true },
-    { name: 'excerpt', label: 'Résumé', type: 'textarea', required: true },
-    { name: 'description', label: 'Description', type: 'textarea' },
+    { name: 'serviceId', label: 'Service associé', type: 'select', options: serviceOptions, placeholder: 'Choisir un service…', required: true },
+    { name: 'name', label: 'Nom', type: 'text', required: true, placeholder: 'Ex : Riz local étuvé' },
+    { name: 'slug', label: 'Slug', type: 'text', required: true, placeholder: 'riz-local-etuve' },
+    { name: 'excerpt', label: 'Résumé', type: 'textarea', required: true, placeholder: 'Présentez le produit en quelques mots.' },
+    { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Décrivez les caractéristiques et avantages du produit.' },
     { name: 'unit', label: 'Unité / Conditionnement', type: 'text', placeholder: 'Ex : sac 25kg' },
-    { name: 'imageUrl', label: 'URL image', type: 'text' },
-    { name: 'imageAlt', label: 'Texte alternatif', type: 'text' },
-    { name: 'order', label: 'Ordre', type: 'number' },
+    { name: 'imageUrl', label: 'URL image', type: 'text', placeholder: 'https://… ou /uploads/produit.jpg' },
+    { name: 'imageAlt', label: 'Texte alternatif', type: 'text', placeholder: 'Ex : Sac de riz local DTK' },
+    { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
     { name: 'isPublished', label: 'Publié', type: 'switch' },
   ]
 

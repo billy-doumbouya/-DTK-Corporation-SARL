@@ -1,22 +1,21 @@
 import { ResourceManager, type FieldDef, type ColumnDef } from '@/components/dashboard/resource-manager'
-import { Badge } from '@/components/ui/badge'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'FAQ' }
 export const dynamic = 'force-dynamic'
 
 const columns: ColumnDef[] = [
-  { key: 'order', label: 'Ordre', render: (i) => <span className="text-muted-foreground">{i.order}</span> },
-  { key: 'question', label: 'Question', render: (i) => <span className="font-medium line-clamp-1">{i.question}</span> },
-  { key: 'answer', label: 'Réponse', render: (i) => <span className="text-muted-foreground text-xs line-clamp-1">{i.answer}</span> },
-  { key: 'isPublished', label: 'Publié', render: (i) => <Badge variant={i.isPublished ? 'default' : 'secondary'}>{i.isPublished ? 'Oui' : 'Non'}</Badge> },
+  { key: 'order', label: 'Ordre', format: 'text-muted' },
+  { key: 'question', label: 'Question', format: 'text-medium-clamp' },
+  { key: 'answer', label: 'Réponse', format: 'text-muted-xs-clamp' },
+  { key: 'isPublished', label: 'Publié', format: 'published' },
 ]
 
 const fields: FieldDef[] = [
-  { name: 'question', label: 'Question', type: 'text', required: true },
-  { name: 'answer', label: 'Réponse', type: 'textarea', required: true },
+  { name: 'question', label: 'Question', type: 'text', required: true, placeholder: 'Ex : Comment demander un devis ?' },
+  { name: 'answer', label: 'Réponse', type: 'textarea', required: true, placeholder: 'Expliquez les étapes ou informations utiles au visiteur.' },
   { name: 'keywords', label: 'Mots-clés (séparés par virgules)', type: 'text', placeholder: 'devis, prix, formulaire', help: 'Aide le chatbot à retrouver cette réponse.' },
-  { name: 'order', label: 'Ordre', type: 'number' },
+  { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
   { name: 'isPublished', label: 'Publié', type: 'switch' },
 ]
 

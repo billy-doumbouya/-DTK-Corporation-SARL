@@ -14,7 +14,7 @@ Site web vitrine + back-office CMS pour DTK Corporation SARL, entreprise guinée
 | TypeScript | 5 | Typage statique |
 | Tailwind CSS | 4 | Styles |
 | shadcn/ui | New York | Composants UI |
-| Prisma ORM | 6 | Base de données (SQLite dev / PostgreSQL prod) |
+| Prisma ORM | 6 | Base de données PostgreSQL (Neon) |
 | Framer Motion | 12 | Animations au scroll |
 | react-icons | 5 | Icônes |
 | z-ai-web-dev-sdk | 0.0.18 | Chatbot LLM (RAG) |
@@ -30,8 +30,8 @@ Site web vitrine + back-office CMS pour DTK Corporation SARL, entreprise guinée
 bun install
 
 # 2. Configurer l'environnement
-cp .env.example .env
-# Éditez .env (voir section 3)
+copy .env.example .env
+# Remplacez DATABASE_URL par l'URL PostgreSQL de votre projet Neon (voir section 3)
 
 # 3. Base de données + seed
 bun run db:push
@@ -49,7 +49,7 @@ Le site est sur `http://localhost:3000`.
 
 | Variable | Description | Défaut |
 |----------|-------------|--------|
-| `DATABASE_URL` | URL base de données | `file:./db/custom.db` (SQLite) |
+| `DATABASE_URL` | URL PostgreSQL Neon, avec `sslmode=require` | Pas de valeur par défaut |
 | `AUTH_SECRET` | Secret session (aléatoire) | — |
 | `ADMIN_SEED_EMAIL` | Email admin initial | `admin@dtk.local` |
 | `ADMIN_SEED_PASSWORD` | Mot de passe admin initial | `ChangeMe123!` |
@@ -57,7 +57,7 @@ Le site est sur `http://localhost:3000`.
 | `MAIL_DRIVER` | `console` (dev) ou `smtp` (prod) | `console` |
 | `MAIL_USER` | Email SMTP (prod) | — |
 | `MAIL_APP_PASSWORD` | Mot de passe app SMTP | — |
-| `BLOB_READ_WRITE_TOKEN` | Token Vercel Blob (prod) | — |
+| `BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN` | Token Vercel Blob (prod) | — |
 
 ---
 
@@ -234,18 +234,16 @@ public/
 1. Poussez le code sur GitHub
 2. Importez sur [Vercel](https://vercel.com)
 3. Variables d'environnement (voir `.env.example`)
-4. Base PostgreSQL : créez sur [Neon](https://neon.tech)
-5. Changez `provider = "postgresql"` dans `prisma/schema.prisma`
-6. `DATABASE_URL` → URL Neon
-7. Activez Vercel Blob → `BLOB_READ_WRITE_TOKEN`
-8. Pour les emails : `bun add nodemailer` + config SMTP
+4. Créez un projet PostgreSQL sur [Neon](https://neon.tech)
+5. Copiez sa chaîne de connexion (de préférence l'URL poolée contenant `-pooler`) dans `DATABASE_URL`
+6. Vérifiez que l'URL inclut `sslmode=require`, puis poussez le schéma avec `bun run db:push`
+7. Initialisez les données avec `bun run db:seed`
+8. Activez Vercel Blob → `BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN`
+9. Configurez les variables SMTP pour les emails
 
-### Migration SQLite → PostgreSQL
+### Initialisation PostgreSQL
 
 ```bash
-# Dans prisma/schema.prisma :
-# datasource db { provider = "postgresql" ... }
-
 bun run db:push
 bun run db:seed
 ```
@@ -277,9 +275,10 @@ Remplacez `/public/dtk-logo.png`.
 
 ### Le site ne démarre pas
 1. Vérifiez `bun install` → dépendances installées
-2. Vérifiez `.env` → `DATABASE_URL` correct
-3. Vérifiez `bun run db:push` → schema synchronisé
-4. Vérifiez `bun run db:seed` → données présentes
+2. Vérifiez que `DATABASE_URL` est l'URL actuelle fournie par Neon, sans publier ni partager ses identifiants
+3. Vérifiez que le projet et l'endpoint Neon sont actifs
+4. Testez l'accès réseau à l'hôte sur le port TCP 5432; si le test expire, vérifiez le pare-feu, le VPN ou les règles réseau de l'hébergeur
+5. Lorsque la connexion est rétablie, exécutez `bun run db:push` si le schéma n'est pas synchronisé, puis `bun run db:seed` si la base est vide
 
 ### Compte admin verrouillé
 ```bash

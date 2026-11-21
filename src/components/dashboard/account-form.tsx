@@ -51,7 +51,7 @@ export function AccountForm({ user }: { user: { email: string; name: string | nu
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="grid w-full min-w-0 gap-6 lg:grid-cols-2">
       {/* Profile info */}
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 font-bold">

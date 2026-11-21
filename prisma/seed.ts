@@ -47,7 +47,7 @@ async function main() {
     'audit.read',
   ]
 
-  const permRecords = []
+  const permRecords: Array<{ id: string; action: string }> = []
   for (const action of PERMISSIONS_LIST) {
     const p = await db.permission.upsert({
       where: { action },

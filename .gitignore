@@ -20,6 +20,18 @@ node_modules
 # production
 /build
 
+# local development data
+/db/*.db
+/db/*.db-*
+/public/uploads/
+*.pid
+
+# uploaded design/source images (the optimized site assets live in public/images)
+/upload/*.png
+/upload/*.jpg
+/upload/*.jpeg
+/upload/*.webp
+
 # misc
 .DS_Store
 *.pem
@@ -32,6 +44,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -40,14 +53,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-local-*
-.claude
-.z-ai-config
+/local-*
+/.claude
+/.z-ai-config
 *.log
 dev.log
 dev.out.log
-test
-prompt
+/test
+/prompt
 
 server.log
 # Skills directory

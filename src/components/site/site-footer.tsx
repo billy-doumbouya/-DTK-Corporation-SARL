@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Icon } from '@/lib/icon'
 import { whatsappLink, splitList } from '@/lib/settings'
 import { db } from '@/lib/db'
@@ -56,10 +57,12 @@ export async function SiteFooter({ settings }: { settings: FooterSettings | null
       <footer className="relative overflow-hidden bg-gradient-to-br from-[#0a1f5c] via-[#101B91] to-[#0d2b5e] text-white">
         {/* Watermark — subtle industrial imagery */}
         <div className="pointer-events-none absolute inset-0 opacity-[0.06]" aria-hidden="true">
-          <img
+          <Image
             src="/images/subcontracting-bg.webp"
             alt=""
-            className="h-full w-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
           />
         </div>
         {/* Decorative blue glow */}
@@ -73,7 +76,7 @@ export async function SiteFooter({ settings }: { settings: FooterSettings | null
             <div className="space-y-4">
               {/* Logo on white badge for visibility on navy background */}
               <div className="inline-flex rounded-xl bg-white px-4 py-2 shadow-lg">
-                <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-10 w-auto" />
+                <Image src="/dtk-logo.png" alt="DTK Corporation SARL" width={600} height={295} sizes="100px" className="h-10 w-auto" />
               </div>
               {/* Tagline */}
               <p className="text-sm italic text-white/70">

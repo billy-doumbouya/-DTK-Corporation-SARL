@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
 import { Icon } from '@/lib/icon'
 import { Button } from '@/components/ui/button'
 import {
@@ -60,8 +61,23 @@ export function SiteHeader({
   settings: HeaderSettings | null
 }) {
   const pathname = usePathname()
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const logoClicks = useRef<{ count: number; at: number }>({ count: 0, at: 0 })
+
+  function handleLogoClick(event: React.MouseEvent) {
+    event.preventDefault()
+    const now = Date.now()
+    const recent = now - logoClicks.current.at < 2000
+    logoClicks.current = recent
+      ? { count: logoClicks.current.count + 1, at: now }
+      : { count: 1, at: now }
+    if (logoClicks.current.count >= 5) {
+      logoClicks.current = { count: 0, at: 0 }
+      router.push('/auth')
+    }
+  }
 
   // Hide top utility bar on scroll (smooth)
   useEffect(() => {
@@ -89,29 +105,29 @@ export function SiteHeader({
             scrolled ? 'max-h-0 opacity-0' : 'max-h-12 opacity-100'
           )}
         >
-          <div className="container mx-auto flex h-9 items-center justify-between px-6 text-xs">
+          <div className="container mx-auto flex h-9 items-center justify-between gap-4 px-6 text-xs">
             {/* Left: contact info */}
-            <div className="flex items-center gap-4">
+            <div className="flex min-w-0 flex-1 items-center gap-4">
               {settings?.email && (
-                <a href={`mailto:${settings.email}`} className="flex items-center gap-1.5 hover:text-accent transition-colors">
-                  <Icon name="FaEnvelope" size={11} />
-                  {settings.email}
+                <a href={`mailto:${settings.email}`} className="flex min-w-0 max-w-[35vw] items-center gap-1.5 whitespace-nowrap transition-colors hover:text-accent">
+                  <Icon name="FaEnvelope" size={11} className="shrink-0" />
+                  <span className="truncate">{settings.email}</span>
                 </a>
               )}
               {settings?.email && settings?.phone && (
                 <span className="text-primary-foreground/30">|</span>
               )}
               {settings?.phone && (
-                <a href={`tel:${settings.phone}`} className="flex items-center gap-1.5 hover:text-accent transition-colors">
-                  <Icon name="FaPhone" size={11} />
-                  {settings.phone}
+                <a href={`tel:${settings.phone}`} className="flex min-w-0 max-w-[25vw] items-center gap-1.5 whitespace-nowrap transition-colors hover:text-accent">
+                  <Icon name="FaPhone" size={11} className="shrink-0" />
+                  <span className="truncate">{settings.phone}</span>
                 </a>
               )}
             </div>
             {/* Right: social icons */}
             {hasSocial && (
               <div className="flex items-center gap-2">
-                <span className="text-primary-foreground/50 mr-1">Suivez-nous :</span>
+                <span className="mr-1 whitespace-nowrap text-primary-foreground/50">Suivez-nous :</span>
                 {settings?.facebookUrl && (
                   <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-foreground/15 hover:bg-accent transition-colors">
                     <Icon name="FaFacebookF" size={11} />
@@ -135,19 +151,14 @@ export function SiteHeader({
 
       {/* ─── Tier 2: Main nav (white) ─── */}
       <div className="bg-background border-b border-border/60">
-        <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
-          {/* Left: Logo + tagline */}
-          <Link href="/" className="flex items-center gap-3" aria-label="DTK Corporation — Accueil">
-            <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-10 w-auto md:h-12" />
-            <div className="hidden 2xl:block 2xl:border-l 2xl:border-accent/30 2xl:pl-3">
-              <p className="whitespace-nowrap text-xs font-semibold leading-tight text-primary">
-                Professionnalisme · Qualité · Satisfaction
-              </p>
-            </div>
+        <div className="container mx-auto flex h-20 items-center justify-between gap-3 px-4 md:gap-4 md:px-6">
+          {/* Brand */}
+          <Link href="/" onClick={handleLogoClick} className="flex shrink-0 items-center" aria-label="DTK Corporation — Accueil">
+            <Image src="/dtk-logo.png" alt="DTK Corporation SARL" width={600} height={295} sizes="100px" className="h-10 w-auto md:h-12" />
           </Link>
 
           {/* Center: Desktop nav */}
-          <nav className="hidden xl:flex items-center gap-0.5" aria-label="Navigation principale">
+          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-0 xl:flex" aria-label="Navigation principale">
             {NAV_ITEMS.map((item) => {
               if (item.hasDropdown && item.href === '/services') {
                 return (
@@ -155,7 +166,7 @@ export function SiteHeader({
                     <DropdownMenuTrigger asChild>
                       <button
                         className={cn(
-                          'inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition-all',
+                          'inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium transition-all 2xl:px-2 2xl:text-sm',
                           isActive(item.href)
                             ? 'bg-accent text-accent-foreground shadow-sm'
                             : 'text-foreground hover:bg-accent/10 hover:text-accent'
@@ -165,17 +176,17 @@ export function SiteHeader({
                         <Icon name="FaChevronDown" size={10} />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="center" className="w-56">
+                    <DropdownMenuContent align="center" className="w-64 max-w-[calc(100vw-2rem)]">
                       {coreServices.map((s) => (
                         <DropdownMenuItem asChild key={s.slug}>
-                          <Link href={`/services/${s.slug}`} className="flex items-center gap-2">
-                            <Icon name="FaArrowRight" size={10} className="text-accent" />
-                            <span>{s.shortTitle || s.title}</span>
+                          <Link href={`/services/${s.slug}`} className="flex min-w-0 items-center gap-2 whitespace-nowrap">
+                            <Icon name="FaArrowRight" size={10} className="shrink-0 text-accent" />
+                            <span className="truncate">{s.shortTitle || s.title}</span>
                           </Link>
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuItem asChild>
-                        <Link href="/services" className="flex items-center gap-2 font-medium">
+                        <Link href="/services" className="flex items-center gap-2 whitespace-nowrap font-medium">
                           <Icon name="FaList" size={12} />
                           Tous les services
                         </Link>
@@ -189,13 +200,12 @@ export function SiteHeader({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-all',
+                    'inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium transition-all 2xl:px-2 2xl:text-sm',
                     isActive(item.href)
                       ? 'bg-accent text-accent-foreground shadow-sm'
                       : 'text-foreground hover:bg-accent/10 hover:text-accent'
                   )}
                 >
-                  {isActive(item.href) && item.icon && <Icon name={item.icon} size={13} />}
                   {item.label}
                 </Link>
               )
@@ -203,9 +213,9 @@ export function SiteHeader({
           </nav>
 
           {/* Right: CTA + theme toggle + mobile menu */}
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
-            <Button asChild size="sm" className="hidden md:inline-flex rounded-full bg-gradient-to-r from-accent to-primary text-white shadow-md hover:shadow-lg transition-all">
+            <Button asChild size="sm" className="hidden whitespace-nowrap rounded-full bg-gradient-to-r from-accent to-primary text-white shadow-md transition-all hover:shadow-lg md:inline-flex">
               <Link href="/contact">
                 <Icon name="FaPaperPlane" size={14} className="mr-1.5" />
                 Nous contacter
@@ -218,25 +228,25 @@ export function SiteHeader({
                   <Icon name="FaBars" size={22} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[320px] sm:w-[380px]">
+              <SheetContent side="right" className="w-[calc(100vw-2rem)] max-w-sm">
                 <SheetHeader>
                   <SheetTitle className="text-left">
-                    <img src="/dtk-logo.png" alt="DTK Corporation SARL" className="h-10 w-auto" />
+                    <Image src="/dtk-logo.png" alt="DTK Corporation SARL" width={600} height={295} sizes="100px" className="h-10 w-auto" />
                   </SheetTitle>
                 </SheetHeader>
-                <nav className="mt-4 flex flex-col gap-1 overflow-y-auto scroll-thin max-h-[calc(100vh-80px)] pb-8" aria-label="Navigation mobile">
+                <nav className="mt-4 flex min-w-0 max-h-[calc(100dvh-8rem)] flex-col gap-1 overflow-y-auto scroll-thin pb-8" aria-label="Navigation mobile">
                   {NAV_ITEMS.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                        'flex min-w-0 items-center gap-3 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                         isActive(item.href) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/10'
                       )}
                     >
-                      <Icon name={item.icon} size={16} />
-                      {item.label}
+                      <Icon name={item.icon} size={16} className="shrink-0" />
+                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
                     </Link>
                   ))}
                   {/* Services submenu */}
@@ -249,10 +259,10 @@ export function SiteHeader({
                         key={s.slug}
                         href={`/services/${s.slug}`}
                         onClick={() => setOpen(false)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent/10"
+                        className="flex min-w-0 items-center gap-3 whitespace-nowrap rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent/10"
                       >
-                        <Icon name="FaArrowRight" size={10} className="text-accent" />
-                        {s.shortTitle || s.title}
+                        <Icon name="FaArrowRight" size={10} className="shrink-0 text-accent" />
+                        <span className="min-w-0 flex-1 truncate">{s.shortTitle || s.title}</span>
                       </Link>
                     ))}
                   </div>
@@ -263,13 +273,15 @@ export function SiteHeader({
                         Contact
                       </p>
                       {settings?.email && (
-                        <a href={`mailto:${settings.email}`} className="flex items-center gap-2 px-3 py-1.5 text-sm hover:text-accent">
-                          <Icon name="FaEnvelope" size={14} /> {settings.email}
+                        <a href={`mailto:${settings.email}`} className="flex min-w-0 items-center gap-2 whitespace-nowrap px-3 py-1.5 text-sm hover:text-accent">
+                          <Icon name="FaEnvelope" size={14} className="shrink-0" />
+                          <span className="min-w-0 truncate">{settings.email}</span>
                         </a>
                       )}
                       {settings?.phone && (
-                        <a href={`tel:${settings.phone}`} className="flex items-center gap-2 px-3 py-1.5 text-sm hover:text-accent">
-                          <Icon name="FaPhone" size={14} /> {settings.phone}
+                        <a href={`tel:${settings.phone}`} className="flex min-w-0 items-center gap-2 whitespace-nowrap px-3 py-1.5 text-sm hover:text-accent">
+                          <Icon name="FaPhone" size={14} className="shrink-0" />
+                          <span className="min-w-0 truncate">{settings.phone}</span>
                         </a>
                       )}
                       {hasSocial && (
