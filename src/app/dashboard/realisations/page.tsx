@@ -20,7 +20,7 @@ const fields: FieldDef[] = [
   { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Décrivez le contexte, les travaux réalisés et les résultats.' },
   { name: 'category', label: 'Catégorie', type: 'text', placeholder: 'Ex : BTP' },
   { name: 'location', label: 'Lieu', type: 'text', placeholder: 'Ex : Conakry, Guinée' },
-  { name: 'coverUrl', label: 'URL couverture', type: 'text', placeholder: 'https://… ou /uploads/projet.jpg' },
+  { name: 'coverUrl', label: 'URL couverture', type: 'image', placeholder: 'https://… ou /uploads/projet.jpg', altField: 'coverAlt' },
   { name: 'coverAlt', label: 'Texte alternatif', type: 'text', placeholder: 'Ex : Bâtiment achevé vu de face' },
   { name: 'publishedAt', label: 'Date de publication', type: 'date', help: 'Ex. : 21/11/2026 — choisissez la date et l’heure de publication.' },
   { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },

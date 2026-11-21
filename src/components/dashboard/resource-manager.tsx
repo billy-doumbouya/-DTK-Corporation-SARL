@@ -19,11 +19,12 @@ import { useRouter } from 'next/navigation'
 export interface FieldDef {
   name: string
   label: string
-  type: 'text' | 'textarea' | 'number' | 'switch' | 'select' | 'date'
+  type: 'text' | 'textarea' | 'number' | 'switch' | 'select' | 'date' | 'image'
   options?: { value: string; label: string }[]
   required?: boolean
   placeholder?: string
   help?: string
+  altField?: string
 }
 
 export interface ColumnDef {
@@ -83,6 +84,7 @@ function ResourceImage({ src, alt, fit }: { src: string; alt: string; fit: 'cont
         alt={alt}
         width={96}
         height={72}
+        unoptimized
         className={cn('h-full w-full', fit === 'contain' ? 'object-contain p-1' : 'object-cover')}
         onError={() => setFailed(true)}
       />
@@ -159,6 +161,164 @@ function renderColumn(column: ColumnDef, item: Record<string, unknown>) {
     default:
       return typeof rawValue === 'boolean' ? (rawValue ? 'Oui' : 'Non') : label
   }
+}
+
+function ImagePreview({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted/50 text-muted-foreground">
+        <Icon name="FaImage" size={24} />
+        <span className="text-xs">Aperçu indisponible</span>
+      </div>
+    )
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes="(max-width: 640px) 90vw, 600px"
+      unoptimized
+      onError={() => setFailed(true)}
+      className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+    />
+  )
+}
+
+export interface ImageFieldProps {
+  id: string
+  label: string
+  value: string
+  placeholder?: string
+  alt: string
+  file: File | null
+  onChange: (value: string) => void
+  onFileChange: (file: File | null) => void
+}
+
+export function ImageField({
+  id,
+  label,
+  value,
+  placeholder,
+  alt,
+  file,
+  onChange,
+  onFileChange,
+}: ImageFieldProps) {
+  const [dragOver, setDragOver] = useState(false)
+  const [localPreview, setLocalPreview] = useState<string | null>(null)
+  const previewSrc = file ? localPreview : value
+
+  function selectFile(selected: File | null) {
+    if (!selected) {
+      onFileChange(null)
+      setLocalPreview(null)
+      return
+    }
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(selected.type)) {
+      toast.error('Choisissez une image JPG, PNG ou WebP.')
+      return
+    }
+    if (selected.size > 5 * 1024 * 1024) {
+      toast.error('La taille maximale de l’image est de 5 Mo.')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setLocalPreview(typeof reader.result === 'string' ? reader.result : null)
+    }
+    reader.onerror = () => toast.error('Impossible de prévisualiser cette image.')
+    reader.readAsDataURL(selected)
+    onChange('')
+    onFileChange(selected)
+  }
+
+  return (
+    <div className="space-y-3">
+      <div
+        onDragOver={(event) => {
+          event.preventDefault()
+          setDragOver(true)
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(event) => {
+          event.preventDefault()
+          setDragOver(false)
+          selectFile(event.dataTransfer.files[0] || null)
+        }}
+        className={cn(
+          'group relative flex min-h-40 flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-gradient-to-br from-muted/60 to-background p-3 transition-all duration-300',
+          dragOver
+            ? 'scale-[1.01] border-accent bg-accent/10 shadow-lg shadow-accent/10'
+            : 'border-border hover:border-accent/50 hover:shadow-md'
+        )}
+      >
+        {previewSrc ? (
+          <div className="absolute inset-0">
+            <ImagePreview key={previewSrc} src={previewSrc} alt={alt || label} />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 opacity-70" />
+          </div>
+        ) : (
+          <div className="pointer-events-none mb-3 flex size-12 items-center justify-center rounded-2xl bg-accent/10 text-accent transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105">
+            <Icon name="FaImage" size={22} />
+          </div>
+        )}
+        {file && (
+          <div className="absolute left-3 top-3 z-10 max-w-[calc(100%-1.5rem)] truncate rounded-full border border-white/20 bg-black/55 px-3 py-1 text-[11px] font-medium text-white backdrop-blur">
+            {file.name} · {Math.max(1, Math.round(file.size / 1024))} Ko
+          </div>
+        )}
+        <label
+          htmlFor={`${id}-file`}
+          className={cn(
+            'relative z-10 inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-xs font-semibold shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md',
+            previewSrc
+              ? 'border-white/30 bg-black/55 text-white hover:bg-black/70'
+              : 'border-border bg-background/90 text-foreground hover:border-accent/40 hover:text-accent'
+          )}
+        >
+          <Icon name="FaUpload" size={13} />
+          {file ? 'Remplacer l’image' : previewSrc ? 'Changer l’image' : 'Choisir une image'}
+          <input
+            id={`${id}-file`}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="sr-only"
+            onChange={(event) => selectFile(event.target.files?.[0] || null)}
+          />
+        </label>
+        {!previewSrc && (
+          <p className="relative z-10 mt-2 text-center text-xs text-muted-foreground">
+            ou glissez-déposez un fichier ici · 5 Mo max.
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <Input
+          id={id}
+          value={value}
+          onChange={(event) => {
+            onChange(event.target.value)
+            if (event.target.value) {
+              onFileChange(null)
+              setLocalPreview(null)
+            }
+          }}
+          placeholder={placeholder || 'Collez une URL ou téléversez une image ci-dessus'}
+        />
+        <p className="text-[11px] text-muted-foreground">
+          Aperçu instantané. Le fichier choisi sera téléversé lors de l’enregistrement.
+        </p>
+      </div>
+    </div>
+  )
 }
 
 export function ResourceManager({
@@ -361,6 +521,7 @@ function EditDialog({
   onSave: (data: Record<string, any>) => Promise<boolean>
 }) {
   const [values, setValues] = useState<Record<string, any>>({})
+  const [imageFiles, setImageFiles] = useState<Record<string, File | null>>({})
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -378,11 +539,53 @@ function EditDialog({
     setValues((v) => ({ ...v, [name]: value }))
   }
 
+  function setImageFile(name: string, file: File | null) {
+    setImageFiles((current) => ({ ...current, [name]: file }))
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
-    await onSave(values)
-    setSaving(false)
+    try {
+      const data = { ...values }
+      for (const field of fields.filter((item) => item.type === 'image')) {
+        const file = imageFiles[field.name]
+        if (file) {
+          const form = new FormData()
+          form.append('file', file)
+          const alt = [
+            field.altField ? values[field.altField] : null,
+            values.title,
+            values.name,
+            title,
+          ].map((value) => String(value ?? '').trim()).find(Boolean) || field.label
+          form.append('alt', alt)
+
+          const response = await fetch('/api/upload', { method: 'POST', body: form })
+          const result = await response.json()
+          if (!response.ok || !result.item?.url) {
+            toast.error(result.error || `Impossible de téléverser ${field.label.toLowerCase()}.`)
+            return
+          }
+
+          data[field.name] = result.item.url
+          setField(field.name, result.item.url)
+          setImageFile(field.name, null)
+        }
+
+        if (field.required && !String(data[field.name] || '').trim()) {
+          toast.error(`Veuillez choisir une image pour « ${field.label} ».`)
+          return
+        }
+      }
+
+      await onSave(data)
+    } catch (error) {
+      console.error('[resource-manager] image upload failed:', error)
+      toast.error('Erreur réseau lors du téléversement de l’image.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -398,11 +601,23 @@ function EditDialog({
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pb-5 scroll-thin">
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {fields.map((f) => (
-              <div key={f.name} className={f.type === 'textarea' ? 'space-y-1.5 sm:col-span-2 xl:col-span-3' : 'min-w-0 space-y-1.5'}>
+              <div key={f.name} className={f.type === 'textarea' || f.type === 'image' ? 'min-w-0 space-y-1.5 sm:col-span-2 xl:col-span-3' : 'min-w-0 space-y-1.5'}>
                 <Label htmlFor={f.name}>
                   {f.label}
                   {f.required && <span className="text-destructive ml-0.5">*</span>}
                 </Label>
+                {f.type === 'image' && (
+                  <ImageField
+                    id={f.name}
+                    label={f.label}
+                    value={values[f.name] || ''}
+                    placeholder={f.placeholder}
+                    alt={String((f.altField && values[f.altField]) || values.title || values.name || f.label)}
+                    file={imageFiles[f.name] || null}
+                    onChange={(value) => setField(f.name, value)}
+                    onFileChange={(file) => setImageFile(f.name, file)}
+                  />
+                )}
                 {f.type === 'text' && (
                   <Input
                     id={f.name}

@@ -17,7 +17,7 @@ const fields: FieldDef[] = [
   { name: 'subtitle', label: 'Sous-titre', type: 'textarea', required: true, placeholder: 'Présentez brièvement l’offre ou le message principal.' },
   { name: 'buttonText', label: 'Texte du bouton', type: 'text', placeholder: 'En savoir plus' },
   { name: 'buttonHref', label: 'Lien du bouton', type: 'text', placeholder: '/services' },
-  { name: 'imageUrl', label: 'URL image (plein écran)', type: 'text', required: true, placeholder: 'https://… ou /uploads/banniere.jpg' },
+  { name: 'imageUrl', label: 'URL image (plein écran)', type: 'image', required: true, placeholder: 'https://… ou /uploads/banniere.jpg', altField: 'imageAlt' },
   { name: 'imageAlt', label: 'Texte alternatif', type: 'text', required: true, placeholder: 'Ex : Chantier de construction réalisé par DTK' },
   { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
   { name: 'isPublished', label: 'Publié', type: 'switch' },

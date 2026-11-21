@@ -17,7 +17,7 @@ const fields: FieldDef[] = [
   { name: 'slug', label: 'Slug', type: 'text', required: true, placeholder: 'dtk-lance-nouveau-projet-agricole' },
   { name: 'excerpt', label: 'Résumé', type: 'textarea', required: true, placeholder: 'Résumez l’information principale en quelques phrases.' },
   { name: 'content', label: 'Contenu', type: 'textarea', placeholder: 'Contenu complet de l’article…' },
-  { name: 'coverUrl', label: 'URL couverture', type: 'text', placeholder: 'https://… ou /uploads/actualite.jpg' },
+  { name: 'coverUrl', label: 'URL couverture', type: 'image', placeholder: 'https://… ou /uploads/actualite.jpg', altField: 'coverAlt' },
   { name: 'coverAlt', label: 'Texte alternatif', type: 'text', placeholder: 'Ex : Équipe DTK lors du lancement' },
   { name: 'tags', label: 'Tags (séparés par virgules)', type: 'text', placeholder: 'Ex : agriculture, projet, DTK' },
   { name: 'authorName', label: 'Auteur', type: 'text', placeholder: 'DTK Corporation SARL' },

@@ -21,7 +21,7 @@ const fields: FieldDef[] = [
   { name: 'iconKey', label: 'Icône', type: 'select', options: ICON_OPTIONS, placeholder: 'Choisir une icône…' },
   { name: 'excerpt', label: 'Résumé', type: 'textarea', required: true, placeholder: 'Court résumé pour les cartes…' },
   { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Description longue…' },
-  { name: 'coverUrl', label: 'URL image de couverture', type: 'text', placeholder: 'https://… ou /uploads/…' },
+  { name: 'coverUrl', label: 'URL image de couverture', type: 'image', placeholder: 'https://… ou /uploads/…', altField: 'coverAlt' },
   { name: 'coverAlt', label: 'Texte alternatif image', type: 'text', placeholder: 'Ex : Équipe DTK sur un chantier' },
   { name: 'zones', label: 'Zones d’intervention', type: 'text', placeholder: 'Conakry, Kankan, Siguiri, Dinguiraye' },
   { name: 'features', label: 'Points forts (un par ligne)', type: 'textarea', placeholder: 'Construction neuve\nRénovation\n…' },

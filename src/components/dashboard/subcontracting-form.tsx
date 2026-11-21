@@ -8,10 +8,12 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { ImageField } from '@/components/dashboard/resource-manager'
 
 export function SubcontractingForm() {
   const router = useRouter()
   const [data, setData] = useState<any>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -31,12 +33,35 @@ export function SubcontractingForm() {
     e.preventDefault()
     setSaving(true)
     try {
+      let payload = data
+      if (imageFile) {
+        const form = new FormData()
+        form.append('file', imageFile)
+        const alt = [data.imageAlt, data.headline, 'Image de la page sous-traitance DTK']
+          .map((value) => String(value || '').trim())
+          .find(Boolean)
+        form.append('alt', alt || 'Image de la page sous-traitance DTK')
+
+        const uploadResponse = await fetch('/api/upload', { method: 'POST', body: form })
+        const uploadResult = await uploadResponse.json()
+        if (!uploadResponse.ok || !uploadResult.item?.url) {
+          toast.error(uploadResult.error || 'Impossible de téléverser l’image.')
+          return
+        }
+
+        payload = { ...data, imageUrl: uploadResult.item.url }
+        setData(payload)
+        setImageFile(null)
+      }
+
       const res = await fetch('/api/admin/subcontracting', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       })
       if (!res.ok) { const r = await res.json(); toast.error(r.error || 'Erreur.'); return }
+      setData(payload)
+      setImageFile(null)
       toast.success('Page enregistrée.')
       router.refresh()
     } catch {
@@ -72,8 +97,17 @@ export function SubcontractingForm() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="imageUrl">URL image</Label>
-            <Input id="imageUrl" value={data.imageUrl || ''} onChange={(e) => set('imageUrl', e.target.value)} />
+            <Label htmlFor="imageUrl">Image de couverture</Label>
+            <ImageField
+              id="imageUrl"
+              label="Image de couverture"
+              value={data.imageUrl || ''}
+              placeholder="https://… ou /uploads/image.jpg"
+              alt={data.imageAlt || data.headline || 'Sous-traitance'}
+              file={imageFile}
+              onChange={(value) => set('imageUrl', value)}
+              onFileChange={setImageFile}
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="imageAlt">Texte alternatif</Label>

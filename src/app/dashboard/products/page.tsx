@@ -24,7 +24,7 @@ export default async function ProductsAdminPage() {
     { name: 'excerpt', label: 'Résumé', type: 'textarea', required: true, placeholder: 'Présentez le produit en quelques mots.' },
     { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Décrivez les caractéristiques et avantages du produit.' },
     { name: 'unit', label: 'Unité / Conditionnement', type: 'text', placeholder: 'Ex : sac 25kg' },
-    { name: 'imageUrl', label: 'URL image', type: 'text', placeholder: 'https://… ou /uploads/produit.jpg' },
+    { name: 'imageUrl', label: 'URL image', type: 'image', placeholder: 'https://… ou /uploads/produit.jpg', altField: 'imageAlt' },
     { name: 'imageAlt', label: 'Texte alternatif', type: 'text', placeholder: 'Ex : Sac de riz local DTK' },
     { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
     { name: 'isPublished', label: 'Publié', type: 'switch' },

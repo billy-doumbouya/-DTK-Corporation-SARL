@@ -25,7 +25,7 @@ export default async function FormationsAdminPage() {
     { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Détaillez le programme, les modules et les compétences visées.' },
     { name: 'duration', label: 'Durée', type: 'text', placeholder: 'Ex : 2 à 3 mois' },
     { name: 'audience', label: 'Public cible', type: 'text', placeholder: 'Jeunes diplômés et professionnels' },
-    { name: 'imageUrl', label: 'URL image', type: 'text', placeholder: 'https://… ou /uploads/formation.jpg' },
+    { name: 'imageUrl', label: 'URL image', type: 'image', placeholder: 'https://… ou /uploads/formation.jpg', altField: 'imageAlt' },
     { name: 'imageAlt', label: 'Texte alternatif', type: 'text', placeholder: 'Ex : Participants à une formation BTP' },
     { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
     { name: 'isPublished', label: 'Publié', type: 'switch' },

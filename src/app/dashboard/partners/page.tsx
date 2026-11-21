@@ -13,7 +13,7 @@ const columns: ColumnDef[] = [
 
 const fields: FieldDef[] = [
   { name: 'name', label: 'Nom du partenaire', type: 'text', required: true, placeholder: 'Ex : Partenaire Guinée SA' },
-  { name: 'logoUrl', label: 'URL du logo', type: 'text', placeholder: 'https://… ou /uploads/logo-partenaire.png' },
+  { name: 'logoUrl', label: 'URL du logo', type: 'image', placeholder: 'https://… ou /uploads/logo-partenaire.png', altField: 'name' },
   { name: 'websiteUrl', label: 'Site web', type: 'text', placeholder: 'https://…' },
   { name: 'order', label: 'Ordre', type: 'number', placeholder: 'Ex : 1' },
   { name: 'isPublished', label: 'Publié', type: 'switch' },
